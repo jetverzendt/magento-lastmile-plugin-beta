@@ -1,0 +1,267 @@
+<table class="form-list" cellspacing="0">
+    <tbody>
+    <tr>
+        <td class="label"><label>Vervoerder</label></td>
+        <td class="value"><?php
+            $shipmentShippers = Mage::helper('jetverzendt_shipping')->getShipmentShippers();
+            if (count($shipmentShippers) == 0) : ?>
+                U heeft nog geen standaard vervoerders opgegeven. U kunt deze selecteren binnen de Jet Verzendt plugin instellingen.
+
+            <?php else : ?>
+                <select id="jet_product" class="select"
+                        onchange="setJetShipmentAndOrderFields();"
+                        name="product">
+                    <option class="" value="" disabled>Kies een product</option>
+                    <?php if (isset($shipmentShippers) && is_array($shipmentShippers) && in_array('DPD', $shipmentShippers)) : ?>
+                        <option class=""
+                                value="DPD">
+                            Pakket
+                            (DPD)
+                        </option>
+                    <?php endif ?>
+                    <?php if (isset($shipmentShippers) && is_array($shipmentShippers) && in_array('DHL', $shipmentShippers)) : ?>
+                        <option class=""
+                                value="DHL">
+                            Pakket
+                            (DHL
+                            Parcel)
+                        </option>
+                    <?php endif ?>
+                    <?php if (isset($shipmentShippers) && is_array($shipmentShippers) && in_array('FADELLO', $shipmentShippers)) : ?>
+                        <option class=""
+                                value="FADELLO">
+                            Fadello (zelfde dag levering)
+                        </option>
+                    <?php endif ?>
+                </select>
+            <?php endif; ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="label"><label>Aantal pakketten</label></td>
+        <td class="value">
+            <input class="" placeholder="" name="amount" id="jet_amount"
+                   value=""
+                   type="text">
+        </td>
+    </tr>
+    <tr>
+        <td class="label"><label>Referentie</label></td>
+        <td class="value">
+            <input class="" placeholder="" id="jet_reference"
+                   value=""
+                   name="reference" type="text">
+            <p class="note"><span>
+                               Bij leeglaten wordt standaard het order ID ingevuld</span></p>
+        </td>
+    </tr>
+    <tr class="jetverzendt_fields DHL">
+        <td class="label"><label>Gewicht (KG)</label></td>
+        <td class="value">
+            <input placeholder="" class="inputBox" name="weight" id="jet_weight"
+                   value=""
+                   type="text">
+        </td>
+    </tr>
+    <tr class="jetverzendt_fields DHL DPD FADELLO">
+        <td class="label"><label>Service</label></td>
+        <td class="value">
+            <select class="" name="service" id="jet_service"
+                    onchange="setJetShipmentAndOrderFields();">
+                <!-- DPD service -->
+                <option class="" value="" disabled selected>Kies een service</option>
+                <option class="jetverzendt_fields DPD"
+                        value="CL">Normale zending (Classic)
+                </option>
+                <option class="jetverzendt_fields DPD"
+                        value="E10">Vóór 10 uur leveren (DPD 10:00)
+                </option>
+                <option class="jetverzendt_fields DPD"
+                        value="E12">Vóór 12 uur leveren (DPD 12:00)
+                </option>
+                <option class="jetverzendt_fields DPD"
+                        value="E18">Vóór 18 uur leveren (DPD 18:00)
+                </option>
+                <option class="jetverzendt_fields DPD"
+                        value="IE2">Express (DPD Express)
+                </option>
+                <option class="jetverzendt_fields DPD"
+                        value="CLR">Rembours
+                </option>
+                <option class="jetverzendt_fields DPD" value="CLRETURN">Pakketshop retour
+                </option>
+                <option class="jetverzendt_fields DPD"
+                        value="CSR">Afhaal retour
+                </option>
+                <option class="jetverzendt_fields DPD"
+                        value="PARCELSHOP">Parcelshop
+                </option>
+
+                <!-- DHL parcel service -->
+                <option class="jetverzendt_fields DHL" value="EUROPLUS">Zakelijk Benelux (Europlus)
+                </option>
+                <option class="jetverzendt_fields DHL" value="DHL_FOR_YOU">
+                    Particulier Benelux (DHL For You)
+                </option>
+                <option class="jetverzendt_fields DHL" value="EUROPACK">Duitsland (Europack)
+                </option>
+                <option class="jetverzendt_fields DHL"
+                        value="COD">Rembours Benelux
+                </option>
+                <option class="jetverzendt_fields DHL" value="EXPRESSER">Zakelijk Benelux vóór 11.00u (Expresser)
+                </option>
+                <option class="jetverzendt_fields DHL"
+                        value="EUROPLUS_INTERNATIONAL">Europa Internationaal
+                </option>
+                <option class="jetverzendt_fields DHL" value="PARCEL_SHOP">Parcelshop
+                </option>
+
+                <option class="jetverzendt_fields FADELLO" value="DEFAULT">Fadello Standaard
+                </option>
+            </select>
+
+        </td>
+    </tr>
+
+    <tr class="jetverzendt_fields CL CLR">
+        <td class="label"></td>
+        <td class="value">
+            <select name="predict" id="jet_predict">
+                <option class="jetverzendt_fields CL CLR" value="0">Ontvanger niet
+                    informeren (Predict uit)
+                </option>
+                <option class="jetverzendt_fields CL CLR" value="1">Ontvanger per SMS
+                    informeren (SMS notificatie)
+                </option>
+                <option class="jetverzendt_fields CL CLR" value="2">Ontvanger per e-mail
+                    informeren (E-mail notificatie)
+                </option>
+            </select>
+        </td>
+    </tr>
+
+    <tr class="jetverzendt_fields CL EUROPLUS">
+        <td class="label"></td>
+        <td class="value">
+            <input id="jet_saturday_delivery" name="saturday_delivery" value="1"
+                   type="checkbox"/>
+            <label for="jet_saturday_delivery">Zaterdaglevering</label>
+
+        </td>
+    </tr>
+
+    <tr class="jetverzendt_fields DHL_FOR_YOU">
+        <td class="label"></td>
+        <td class="value">
+            <input id="jet_signature_required" name="signature_required" value="1"
+                   type="checkbox"/>
+            <label for="jet_signature_required">Handtekening bij aflevering</label>
+
+        </td>
+    </tr>
+
+    <tr class="jetverzendt_fields DHL_FOR_YOU">
+        <td class="label"></td>
+        <td class="value">
+            <input id="jet_not_by_neighbours" name="not_by_neighbours" value="1"
+                   type="checkbox"/>
+            <label for="jet_not_by_neighbours">Niet afleveren bij de buren</label>
+        </td>
+    </tr>
+
+
+    <tr class="jetverzendt_fields DHL_FOR_YOU">
+        <td class="label"></td>
+        <td class="value">
+            <input id="jet_evening" name="evening" value="1"
+                   type="checkbox"/>
+            <label for="jet_evening">Directe avondservice</label>
+        </td>
+    </tr>
+
+
+    <tr class="jetverzendt_fields DHL_FOR_YOU">
+        <td class="label"></td>
+        <td class="value">
+
+            <input id="jet_extra_insurance" name="extra_insurance" value="1"
+                   type="checkbox"/>
+            <label for="jet_extra_insurance">Extra zeker</label>
+
+        </td>
+    </tr>
+
+
+    <tr class="jetverzendt_fields CLR COD">
+        <td class="label"><label>Rembours waarde</label></td>
+        <td class="value">
+            <input class="" name="cod" id="jet_cod" type="text"
+                   value=""/>
+
+        </td>
+    </tr>
+
+    <tr class="jetverzendt_fields EUROPLUS EXPRESSER EUROPLUS_INTERNATIONAL">
+        <td class="label"><label>Verzekerde waarde</label></td>
+        <td class="value">
+            <input class="" name="insurance" id="jet_insurance" type="text"
+                   value=""/>
+        </td>
+    </tr>
+
+    <tr class="jetverzendt_fields PARCEL_SHOP PARCELSHOP">
+        <td class="label"><label>Parcelshop ID</label></td>
+        <td class="value">
+            <input class="" name="parcel_shop_id" id="jet_parcel_shop_id" type="text"
+                   value=""/>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label"><label>Jet Verzendt pickup datum</label></td>
+        <td class="value">
+            <input id="jet_daily_pickup" name="daily_pickup" value="1" onchange="setJetShipmentAndOrderFields();"
+                   type="checkbox"/>
+            <label for="jet_daily_pickup">Ik heb dagelijkse pickup levering</label><br/>
+
+            <div id="fields_jet_pickup_date">
+                <input type="text" class="pickup_date" name="pickup_date" id="jet_pickup_date"
+                       value="" style="width: 80px"/>
+                <img style="" title="Kies een datum" id="date_select_trig" class="v-middle" alt=""
+                     src="<?php echo $this->getSkinUrl('images/grid-cal.gif') ?> "/></div>
+        </td>
+    </tr>
+
+    <tr id="jet_option_default_method">
+        <td class="value" colspan="2">
+            <input id="jet_set_as_default"
+                   type="checkbox"/>
+            <label for="jet_set_as_default">Deze instelling doorkopieren voor alles (met uitzondering van lastmile bestellingen).</label><br/>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <button title="Opslaan" type="button" onclick="jetSaveShipmentSettingsBox();" class=""><span>Opslaan</span>
+            </button>
+        </td>
+    </tr>
+    </tbody>
+
+</table>
+<input type="hidden" id="jet_default_order" name="default_order" value=""/>
+<input type="hidden" id="jet_entity_id" name="entity_id" value=""/>
+<input type="hidden" id="jet_increment_id" name="increment_id" value=""/>
+
+<script type="text/javascript">
+    //<![CDATA[
+    Calendar.setup({
+        inputField: "jet_pickup_date",
+        ifFormat: "%d-%m-%Y",
+        showsTime: false,
+        button: "date_select_trig",
+        align: "Bl",
+        singleClick: true
+    });
+    //]]>
+</script>

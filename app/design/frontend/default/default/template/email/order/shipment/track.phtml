@@ -1,0 +1,61 @@
+<?php
+/**
+ * Jet Verzendt
+ *
+ * Plaats dit track.phtml bestand in de map email/order/shipment van uw frontend template folder van uw Magento installatie.
+ */
+?>
+<?php $_shipment = $this->getShipment() ?>
+<?php $_order = $this->getOrder() ?>
+<?php if (Mage::helper('jetverzendt_shipping')->isJetVerzendtOrder($_order->getEntityId())) : ?>
+    <?php $packages = Mage::helper('jetverzendt_shipping')->getPackages($_order->getEntityId()); ?>
+    <?php if ($packages) : ?>
+        <table cellspacing="0" cellpadding="0" border="0" width="650" style="border:1px solid #EAEAEA;">
+            <thead>
+            <tr>
+                <th align="left" bgcolor="#EAEAEA"
+                    style="font-size:13px; padding:3px 9px"><?php echo $this->__('Shipped By') ?></th>
+                <th align="center" bgcolor="#EAEAEA"
+                    style="font-size:13px; padding:3px 9px"><?php echo $this->__('Tracking Number') ?></th>
+            </tr>
+            </thead>
+            <?php $i = 0; ?>
+            <tbody>
+            <?php foreach ($packages as $package) : ?>
+                <tr>
+                    <td align="left" valign="top"
+                        style="padding:3px 9px"><?php echo $this->escapeHtml($package->getShipmentMethodName()) ?></td>
+                    <td align="center" valign="top"
+                        style="padding:3px 9px">
+                        <a href="<?php echo $this->escapeUrl($package->getTrackTraceUrl()); ?>" target="_blank">
+                            <?php echo $this->escapeHtml($package->getTrackTraceKey()) ?></a></td>
+                </tr>
+            <?php endforeach ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+<?php else : ?>
+    <?php if ($_shipment && $_order && $_shipment->getAllTracks()): ?>
+        <table cellspacing="0" cellpadding="0" border="0" width="650" style="border:1px solid #EAEAEA;">
+            <thead>
+            <tr>
+                <th align="left" bgcolor="#EAEAEA"
+                    style="font-size:13px; padding:3px 9px"><?php echo $this->__('Shipped By') ?></th>
+                <th align="center" bgcolor="#EAEAEA"
+                    style="font-size:13px; padding:3px 9px"><?php echo $this->__('Tracking Number') ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php $i = 0;
+            foreach ($_shipment->getAllTracks() as $_item): $i++ ?>
+                <tr>
+                    <td align="left" valign="top"
+                        style="padding:3px 9px"><?php echo $this->escapeHtml($_item->getTitle()) ?></td>
+                    <td align="center" valign="top"
+                        style="padding:3px 9px"><?php echo $this->escapeHtml($_item->getNumber()) ?></td>
+                </tr>
+            <?php endforeach ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+<?php endif; ?>

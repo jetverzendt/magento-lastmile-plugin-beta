@@ -1,0 +1,125 @@
+<?php
+$deliver = $this->getDeliverDates();
+
+$lastmilePriceDhlEvening = $this->getLastmilePriceDhlEvening();
+
+$arrPeriods[1] = 'Ochtend';
+$arrPeriods[2] = 'Voormiddag';
+$arrPeriods[3] = 'Namiddag';
+$arrPeriods[4] = 'Avond';
+
+$arrWeekdays[0] = 'zo';
+$arrWeekdays[1] = 'ma';
+$arrWeekdays[2] = 'di';
+$arrWeekdays[3] = 'wo';
+$arrWeekdays[4] = 'do';
+$arrWeekdays[5] = 'vr';
+$arrWeekdays[6] = 'za';
+
+
+if ($deliver && isset($deliver->schedule) && is_object($deliver->schedule) && count($deliver->schedule) > 0) {
+
+    echo '<h1>Kies een tijdstip:</h1>';
+
+    echo '<table width=\'92%\' class=\'deliver_dates\'>';
+    echo '<thead>';
+    echo '<tr>';
+    echo '  <th>Datum</th>';
+    foreach ($arrPeriods as $arr_key => $arr_val) {
+        echo '  <th>' . $arr_val . '</th>';
+    }
+    echo '</tr>';
+    echo '</thead>';
+
+    echo '<tbody>';
+
+
+    if (isset($deliver->schedule) && count($deliver->schedule) > 0) {
+        foreach ($deliver->schedule as $service => $value) {
+
+            if (isset($value)) {
+                foreach ($value as $date => $periods) {
+
+                    if (Mage::helper('jetverzendt_shipping')->showDhlDeliverPeriod($date) == false) {
+                        continue;
+                    }
+
+                    echo '<tr>';
+                    echo '  <td>' . $arrWeekdays[date('w', strtotime($date))] . ' ' . $date . '</td>';
+
+                    foreach ($arrPeriods as $arr_key => $arr_val) {
+                        echo '<td>';
+
+                        if (isset($periods[0]->from) && isset($periods[0]->to)) {
+                            $period = $periods[0]->from . '-' . $periods[0]->to;
+
+                            echo '<a onclick="$(\'jet_last_mile_choice\').show(); $(\'lastmile_deliverperiod\').setValue(\'' . $this->escapeHtml($period)
+                                . '\');  $(\'lastmile_service\').setValue(\'DHL\'); $(\'lastmile_deliverdate\').setValue(\'' . $this->escapeHtml($date)
+                                . '\'); $(\'lastmile_deliverevening\').setValue(\''
+                                . $this->escapeHtml(0) . '\'); $(\'lastmile_type\').setValue(\'dhl_deliverdate\'); $(\'jet_name_lastmile\').update(\'' . $this->escapeHtml(
+                                    $date . ' | tijdstip: ' . $period
+                                ) . '\'); $(\'lastmile_lightbox\').hide(); return false; ">';
+
+                            if ($arr_key == 1 && $period == '09:00-13:00') {
+                                echo $period;
+                            }
+                            if ($arr_key == 2 && $period == '11:00-15:00') {
+                                echo $period;
+                            }
+                            if ($arr_key == 3 && $period == '14:00-18:00') {
+                                echo $period;
+                            }
+
+                            echo '</a>';
+                        }
+
+
+                        if (isset($periods[1]->from) && isset($periods[1]->to)) {
+                            $period = $periods[1]->from . '-' . $periods[1]->to;
+                            if ($arr_key == 4 && $period == '18:00-21:00') {
+                                echo '<a onclick="$(\'jet_last_mile_choice\').show(); $(\'lastmile_deliverperiod\').setValue(\'' . $this->escapeHtml($period)
+                                    . '\'); $(\'lastmile_service\').setValue(\'DHL\'); $(\'lastmile_deliverdate\').setValue(\'' . $this->escapeHtml($date)
+                                    . '\'); $(\'lastmile_type\').setValue(\'dhl_deliverdate\'); $(\'lastmile_deliverevening\').setValue(\''
+                                    . $this->escapeHtml(1) . '\'); $(\'jet_name_lastmile\').update(\'' . $this->escapeHtml(
+                                        $date . ' | tijdstip: ' . $period
+                                    ) . '\'); $(\'lastmile_lightbox\').hide(); return false; ">';
+                                echo $period;
+                                echo '</a>';
+
+                                echo '<span class="jet_special_price"> + ';
+                                echo Mage::helper('core')->currency($lastmilePriceDhlEvening, true, false);
+                                echo '</span>';
+                            }
+
+                        }
+
+                        echo '</td>';
+                    }
+
+                    echo '</tr>';
+
+
+                }
+            }
+        }
+    } else {
+
+        echo '<tr><td colspan="5">Helaas... er kan geen data getoond worden. Heeft u uw adres en postcode correct ingevuld?</td></tr>';
+    }
+
+    echo '<tbody>';
+
+    echo '</table>';
+} else {
+
+    echo 'Helaas... er kan geen data getoond worden. Heeft u uw adres en postcode correct ingevuld?';
+
+}
+?>
+
+
+<input type="hidden" name="lastmile_deliverdate" id="lastmile_deliverdate"/>
+<input type="hidden" name="lastmile_deliverperiod" id="lastmile_deliverperiod"/>
+<input type="hidden" name="lastmile_deliverevening" id="lastmile_deliverevening"/>
+
+

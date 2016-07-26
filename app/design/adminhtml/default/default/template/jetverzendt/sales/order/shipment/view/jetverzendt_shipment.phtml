@@ -1,0 +1,114 @@
+<?php
+$lastmile = $this->getOrder()->getJetLastMile();
+$lastmile = (isset($lastmile)) ? @unserialize($lastmile) : false;
+?>
+<?php if ($lastmile) : ?>
+    <br/><h3>Door klant gekozen Last mile opties</h3>
+
+    <?php if (isset($lastmile['type']) && $lastmile['type'] == 'deliverdate') : ?>
+        <table class="form-list" cellspacing="0">
+            <tbody>
+            <tr>
+                <td class="label"><label>Type</label></td>
+                <td class="value">
+                    Bezorgmoment
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label>Service</label></td>
+                <td class="value">
+                    <?php echo (isset($lastmile['lastmile_service'])) ? $this->escapeHtml($lastmile['lastmile_service']) : ''; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label>Bezorgdatum</label></td>
+                <td class="value">
+                    <?php echo (isset($lastmile['lastmile_deliverdate'])) ? date('d-m-Y', strtotime($lastmile['lastmile_deliverdate'])) : ''; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label>Gekozen tijdvak</label></td>
+                <td class="value">
+                    <?php echo (isset($lastmile['lastmile_deliverperiod'])) ? $this->escapeHtml($lastmile['lastmile_deliverperiod']) : ''; ?>
+                    <?php echo (isset($lastmile["lastmile_deliverevening"]) && $lastmile["lastmile_deliverevening"]) ? '<strong>(avondlevering!)</strong>' : '' ?>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    <?php endif ?>
+
+    <?php if (isset($lastmile['type']) && $lastmile['type'] == 'parcelshop') : ?>
+        <table class="form-list" cellspacing="0">
+            <tbody>
+            <tr>
+                <td class="label"><label>Type</label></td>
+                <td class="value">
+                    Parcelshop
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label>Service</label></td>
+                <td class="value">
+                    <?php echo (isset($lastmile['lastmile_service'])) ? $this->escapeHtml($lastmile['lastmile_service']) : ''; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label>Parcelshop ID</label></td>
+                <td class="value">
+                    <?php echo (isset($lastmile['lastmile_parcelshop_id'])) ? $this->escapeHtml($lastmile['lastmile_parcelshop_id']) : ''; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label>Naam parcelshop</label></td>
+                <td class="value">
+                    <?php echo (isset($lastmile['lastmile_parcelshop_description'])) ? $this->escapeHtml($lastmile['lastmile_parcelshop_description']) : ''; ?>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    <?php endif ?>
+
+    <?php if (isset($lastmile['type']) && $lastmile['type'] == 'dpd_saterday') : ?>
+        <table class="form-list" cellspacing="0">
+            <tbody>
+            <tr>
+                <td class="label"><label>Type</label></td>
+                <td class="value">
+                    DPD Zaterdaglevering
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label>Datum</label></td>
+                <td class="value">
+                    <?php echo (isset($lastmile['lastmile_deliverdate'])) ? 'Zaterdag '.  date('d-m-Y', strtotime($lastmile['lastmile_deliverdate'])) : ''; ?>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    <?php endif ?>
+<?php endif ?>
+
+<br/><h3>Track &amp; trace</h3>
+<table class="form-list" cellspacing="0">
+    <tbody>
+    <?php if ($this->getPackages()) :
+        foreach ($this->getPackages() as $package) :
+            ?>
+
+            <tr>
+                <td class="label"><label><?php echo $package->getShipmentMethodName(); ?></label></td>
+                <td class="value"><a
+                        href="<?php echo $this->escapeUrl($package->getTrackTraceUrl()); ?>"
+                        target="_blank"><?php echo $this->escapeHtml($package->getTrackTraceKey()) ?></a>
+                </td>
+            </tr>
+            <?php
+        endforeach;
+    else :?>
+        <tr>
+            <td>Geen orderinfo beschikbaar</td>
+        </tr>
+        <?php
+    endif; ?>
+    </tbody>
+</table>

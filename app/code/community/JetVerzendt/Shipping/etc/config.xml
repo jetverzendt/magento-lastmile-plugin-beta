@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<!--
+/**
+* JetVerzendt
+*
+-->
+<config>
+    <modules>
+        <JetVerzendt_Shipping>
+            <version>0.1.8</version>
+        </JetVerzendt_Shipping>
+    </modules>
+
+    <!-- General functions -->
+    <global>
+
+        <!-- load models -->
+        <models>
+            <jetverzendt_shipping>
+                <class>JetVerzendt_Shipping_Model</class>
+                <resourceModel>jetverzendt_shipping_resource</resourceModel>
+            </jetverzendt_shipping>
+            <jetverzendt_shipping_resource>
+                <class>JetVerzendt_Shipping_Model_Resource</class>
+                <entities>
+                    <shipment>
+                        <table>jetverzendt_shipping_shipment</table>
+                    </shipment>
+                    <package>
+                        <table>jetverzendt_shipping_package</table>
+                    </package>
+                </entities>
+            </jetverzendt_shipping_resource>
+        </models>
+
+        <!-- Helper -->
+        <helpers>
+            <jetverzendt_shipping>
+                <class>JetVerzendt_Shipping_Helper</class>
+            </jetverzendt_shipping>
+        </helpers>
+
+        <!-- load blocks -->
+        <blocks>
+            <jetverzendt>
+                <class>
+                    JetVerzendt_Shipping_Block
+                </class>
+            </jetverzendt>
+
+
+        </blocks>
+
+
+        <resources>
+            <!-- sql upgrade setup -->
+            <jetverzendt_shipping_setup>
+                <setup>
+                    <module>JetVerzendt_Shipping</module>
+                    <class>Mage_Sales_Model_Mysql4_Setup</class>
+                </setup>
+            </jetverzendt_shipping_setup>
+        </resources>
+
+        <sales>
+            <quote>
+                <totals>
+                    <fee>
+                        <class>JetVerzendt_Shipping_Model_Sales_Quote_Address_Total_Fee</class>
+                    </fee>
+                </totals>
+            </quote>
+        </sales>
+
+
+    </global>
+
+
+    <!-- router admin functions -->
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <JetVerzendt_Shipping after="Mage_Adminhtml">JetVerzendt_Shipping</JetVerzendt_Shipping>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <!-- admin layout -->
+    <adminhtml>
+        <layout>
+            <updates>
+                <jetverzendt>
+                    <file>jetverzendt.xml</file>
+                </jetverzendt>
+            </updates>
+        </layout>
+
+        <events>
+
+            <core_block_abstract_prepare_layout_before>
+                <observers>
+                    <!--Extra columns-->
+                    <shipmentgrid_column_append>
+                        <type>model</type>
+                        <class>JetVerzendt_Shipping_Model_Adminhtml_Observer</class>
+                        <method>appendCustomColumn</method>
+                    </shipmentgrid_column_append>
+                    <!--Dropdown menus-->
+                    <jetverzendt_shipping_block_abstract_prepare_layout_before>
+                        <class>JetVerzendt_Shipping_Model_Adminhtml_Observer</class>
+                        <method>addShipmentsDropdownAction</method>
+                    </jetverzendt_shipping_block_abstract_prepare_layout_before>
+                    <jetverzendt_order_block_abstract_prepare_layout_before>
+                        <class>JetVerzendt_Shipping_Model_Adminhtml_Observer</class>
+                        <method>addOrdersDropdownAction</method>
+                    </jetverzendt_order_block_abstract_prepare_layout_before>
+
+                </observers>
+            </core_block_abstract_prepare_layout_before>
+
+
+            <sales_order_shipment_grid_collection_load_before>
+                <observers>
+                    <jetverzendt_shipping>
+                        <model>JetVerzendt_Shipping_Model_Adminhtml_Observer</model>
+                        <method>salesShipmentGridCollectionLoadBefore</method>
+                    </jetverzendt_shipping>
+                </observers>
+            </sales_order_shipment_grid_collection_load_before>
+
+            <sales_order_grid_collection_load_before>
+                <observers>
+                    <jetverzendt_shipping>
+                        <model>JetVerzendt_Shipping_Model_Adminhtml_Observer</model>
+                        <method>SalesOrderGridCollectionLoadBefore</method>
+                    </jetverzendt_shipping>
+                </observers>
+            </sales_order_grid_collection_load_before>
+
+        </events>
+
+        <!-- avoid permissions admin configuration -->
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <jetverzendt>
+                                            <title>Jet Verzendt</title>
+                                        </jetverzendt>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+
+    <frontend>
+        <events>
+            <checkout_controller_onepage_save_shipping_method>
+                <observers>
+                    <shipnote>
+                        <type>model</type>
+                        <class>JetVerzendt_Shipping_Model_Observer</class>
+                        <method>checkoutSaveShippingMethod</method>
+                    </shipnote>
+                </observers>
+            </checkout_controller_onepage_save_shipping_method>
+            <sales_convert_quote_to_order>
+                <observers>
+                    <shipnote>
+                        <type>model</type>
+                        <class>JetVerzendt_Shipping_Model_Observer</class>
+                        <method>checkoutConvertQuoteToOrder</method>
+                    </shipnote>
+                </observers>
+            </sales_convert_quote_to_order>
+        </events>
+        <layout>
+            <updates>
+                <jetverzendt_layout module="JetVerzendt_Shipping">
+                    <file>jetverzendt.xml</file>
+                </jetverzendt_layout>
+            </updates>
+        </layout>
+        <routers>
+            <parcelshop>
+                <use>standard</use>
+                <args>
+                    <module>JetVerzendt_Shipping</module>
+                    <frontName>jetverzendt</frontName>
+                </args>
+            </parcelshop>
+        </routers>
+    </frontend>
+
+</config>

@@ -1,0 +1,195 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:300,400,700);
+
+#lastmile_lightbox .shop {
+    cursor: pointer;
+    padding: 5px;
+    font-size: 12px;
+}
+
+#jet_name_parcelshops {
+    font-weight: bold;
+}
+
+#lastmile_lightbox_loading {
+    padding-top: 10px;
+    padding-left: 40%;
+    color: #4e4e4e;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: bold;
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 1);
+    bottom: 15px;
+    position: absolute;
+}
+
+#lastmile_lightbox_loading:after {
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: bottom;
+    -webkit-animation: ellipsis steps(4,end) 900ms infinite;
+    animation: ellipsis steps(4,end) 900ms infinite;
+    content: "\2026"; /* ascii code for the ellipsis character */
+    width: 0px;
+}
+
+@keyframes ellipsis {
+    to {
+        width: 1.25em;
+    }
+}
+
+@-webkit-keyframes ellipsis {
+    to {
+        width: 1.25em;
+    }
+}
+
+
+#lastmile_lightbox {
+    background-color: white;
+    border: 1px solid lightgrey;
+    border-radius: 3px;
+    width: 1000px;
+    height: 528px;
+    padding: 34px 0;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 900;
+    box-shadow: 0 0 20px #888888;
+}
+
+#lastmile_lightbox h1 {
+    color: #636363;
+    text-transform: inherit;
+    font: 300 30px/45px 'Lato';
+    padding-left: 40px;
+}
+
+#lastmile_lightbox .opening_hours {
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 11px;
+}
+
+#lastmile_lightbox_map {
+    height: 350px;
+    width: 100%;
+    margin: 30px 0px;
+}
+
+#lastmile_lightbox_list {
+    overflow-y: auto;
+    height: 200px;
+}
+
+#lastmile_lightbox_content label {
+    font-weight: 300;
+    text-transform: uppercase;
+    font: 300 10px/16px 'Lato';
+    display: block;
+    margin-left: 40px;
+}
+
+#lastmile_lightbox_content #jet_address {
+    border: 0;
+    border-bottom: 1px solid #e8ede2;
+    margin-left: 40px;
+    padding: 0;
+}
+
+#lastmile_lightbox_content #jet_submit_address {
+    border: 0;
+    background: 0;
+    margin: 0px 0 0 -30px;
+    text-transform: uppercase;
+    background: url('../images/search-icon.png') center center no-repeat;
+    width: 18px;
+    height: 18px;
+    text-indent: -9999px;
+    background-size: cover;
+}
+
+#lastmile_lightbox_close {
+    float: right;
+    position: relative;
+    z-index: 901;
+    cursor: pointer;
+    border: 1px solid lightgrey;
+    border-radius: 20px;
+    height: 25px;
+    width: 25px;
+    margin: 12px 40px;
+    text-align: center;
+    padding-top: -4px;
+    background-color: white;
+}
+
+#jet_link_deliver_dates, #jet_link_parcelshops {
+    cursor: pointer;
+}
+
+#lastmile_lightbox .deliver_dates a {
+    display: inline-block;
+    cursor: pointer;
+    transition: color .2s linear;
+}
+
+#lastmile_lightbox .deliver_dates a:hover {
+    text-decoration: none;
+    color: #000;
+    transition-delay: 0;
+}
+
+.lastmile-button {
+    margin: 10px 0;
+}
+
+.jet_special_price {
+    color: #ff6402;
+    font-size: 11px;
+    font-style: italic;
+}
+
+.jet_small {
+    font-size: 11px;
+}
+
+.background {
+    background: rgba(0,0,0,0.2);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.deliver_dates {
+    margin: 40px;
+    font-family: 'Lato';
+}
+
+.deliver_dates thead th {
+    font-weight: 700;
+    padding: 0 0 6px 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.deliver_dates td {
+    font-size: 12px;
+    border-right: 1px solid rgba(0,0,0, 0.05);
+    padding: 7px 0 7px 12px;
+}
+
+.deliver_dates tr:nth-child(odd) {
+    background: rgba(0,0,0, 0.05);
+}
+
+.deliver_dates tr td:last-child {
+    border: 0 !important;
+}
+
+.deliver_dates thead tr {
+    background: #fff !important;
+}

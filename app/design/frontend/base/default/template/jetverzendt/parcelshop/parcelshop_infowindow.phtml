@@ -1,0 +1,69 @@
+<?php
+$arrWeekdays[0] = 'Zondag';
+$arrWeekdays[1] = 'Maandag';
+$arrWeekdays[2] = 'Dinsdag';
+$arrWeekdays[3] = 'Woensdag';
+$arrWeekdays[4] = 'Donderdag';
+$arrWeekdays[5] = 'Vrijdag';
+$arrWeekdays[6] = 'Zaterdag';
+
+
+
+echo '<h3>';
+echo $this->escapeHtml($this->getShop()->name);
+
+if ($this->getShipper() == 'DPD') {
+    $lastmilePriceDpdParcelshop = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdParcelshop();
+    if ($lastmilePriceDpdParcelshop > 0) {
+        echo ' ( + ' . Mage::helper('core')->currency($lastmilePriceDpdParcelshop, true, false) . ')';
+    }
+}
+
+if ($this->getShipper() == 'DHL') {
+    $lastmilePriceDhlParcelshop = Mage::helper('jetverzendt_shipping')->getLastmilePriceDhlParcelshop();
+    if ($lastmilePriceDhlParcelshop > 0) {
+        echo ' ( + ' . Mage::helper('core')->currency($lastmilePriceDhlParcelshop, true, false) . ')';
+    }
+}
+
+
+
+echo '</h3>';
+
+echo $this->escapeHtml($this->getShop()->street) . '<br/>' . $this->escapeHtml($this->getShop()->zip_code) . ' ' . $this->escapeHtml($this->getShop()->city);
+
+echo '<br/><br/>';
+
+echo '<i>Openingstijden</i>';
+
+echo '<table width=\'500\' class=\'opening_hours\'><tr>';
+
+if (isset($this->getShop()->opening_hours)) {
+    foreach ($this->getShop()->opening_hours as $opening_hour) {
+        echo '<td valign=\'top\'>';
+
+        echo '<strong>' . $arrWeekdays[$opening_hour->weekday] . '</strong><br/>';
+
+        if (isset($opening_hour->morning_open) && ! empty($opening_hour->morning_open) && isset($opening_hour->afternoon_close)
+            && ! empty($opening_hour->afternoon_close)
+        ) {
+
+            echo $opening_hour->morning_open . ' - ' . $opening_hour->afternoon_close;
+        } else {
+            echo 'gesloten';
+        }
+
+        echo '</td>';
+    }
+}
+
+echo '</tr></table>';
+
+echo '<br/>';
+
+echo '<button class="button" onclick="$(\'jet_last_mile_choice\').show(); $(\'lastmile_service\').setValue(\'' . $this->getShipper() . '\'); $(\'lastmile_parcelshop_id\').setValue(\''
+    . $this->escapeHtml($this->getShop()->id) . '\');  $(\'lastmile_parcelshop_description\').setValue(\'' . $this->escapeHtml(
+        $this->getShop()->name . ' - ' . $this->getShop()->street . ' - ' . $this->getShop()->city
+    ) . '\');  $(\'jet_name_lastmile\').update(\'' . $this->escapeHtml(
+        $this->getShop()->name . ' - ' . $this->getShop()->street . ' - ' . $this->getShop()->city
+    ) . '\');  $(\'lastmile_type\').setValue(\'parcelshop\');  $(\'lastmile_lightbox\').hide(); return false; ">Bevestig Parcelshop</button>';

@@ -1,0 +1,9 @@
+<?php $googleMapsKey = Mage::helper('jetverzendt_shipping')->getLastmileGoogleMapsKey();
+if (isset($googleMapsKey) && ! empty($googleMapsKey)) : ?>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $this->escapeHtml($googleMapsKey); ?>&sensor=false" type="text/javascript"></script>
+
+<?php else : ?>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+
+
+<?php endif; ?>
