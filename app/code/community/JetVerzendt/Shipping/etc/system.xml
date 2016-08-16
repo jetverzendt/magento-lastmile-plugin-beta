@@ -166,7 +166,7 @@
                         <jetverzendt_lastmile_delivery_dhl_time translate="label comment">
                             <label>Uiterlijk tijdstip dagelijkse DHL tijdsvaklevering:</label>
                             <comment>
-                                <![CDATA[Wat is dagelijks het uiterlijke tijdstip tot wanneer een tijdsvaklevering de volgende nog mogelijk is? Dit kan het tijdstip zijn dat uw bestellingen dagelijks door de vervoerder bij u worden opgehaald, bijvoorbeeld 16:00:00 uur. ]]></comment>
+                                <![CDATA[Wat is dagelijks het uiterlijke tijdstip tot wanneer een tijdsvaklevering de volgende dag nog mogelijk is? Dit kan het tijdstip zijn dat uw bestellingen dagelijks door de vervoerder bij u worden opgehaald, bijvoorbeeld 16:00:00 uur. ]]></comment>
                             <frontend_type>time</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
