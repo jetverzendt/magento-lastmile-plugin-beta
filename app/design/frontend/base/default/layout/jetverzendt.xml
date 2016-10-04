@@ -1,0 +1,22 @@
+<layout version="0.1.0">
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/jetverzendt.css</name>
+            </action>
+            <action method="addItem">
+                <type>js</type>
+                <name>jetverzendt/jetverzendt.js</name>
+            </action>
+        </reference>
+        <reference name="before_body_end">
+            <block type="jetverzendt/js" name="jetverzendt_js" template="jetverzendt/js.phtml"/>
+        </reference>
+    </checkout_onepage_index>
+    <checkout_onepage_shippingmethod>
+        <reference name="root">
+            <block type="jetverzendt/lastmile" output="toHtml" name="jetverzendt_lastmile" template="jetverzendt/lastmile.phtml"/>
+        </reference>
+    </checkout_onepage_shippingmethod>
+</layout>

@@ -1,0 +1,100 @@
+.jet_shipment_error td {
+    background: rgba(226, 17, 0, 0.25);
+}
+
+.jet_label_printed {
+    text-align: center;
+
+}
+
+.jet_label_printed .yes {
+    background-color: #3CB860;
+    border-radius: 10px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+}
+
+.jet_label_printed .no {
+    background-color: #E41100;
+    border-radius: 10px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+}
+
+.jet_green {
+    color: #3CB860;
+    font-weight: bold;
+}
+
+.jet_red {
+    color: #E41100;
+    font-weight: bold;
+}
+
+.jet_grey {
+    font-weight: bold;
+    color: grey;
+}
+
+.jet_lightbox {
+    background-color: white;
+    border: 1px solid lightgrey;
+    border-radius: 3px;
+    width: 500px;
+    height: 500px;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 900;
+    box-shadow: 0 0 20px #888888;
+}
+
+.jet_lightbox_close {
+    float: right;
+    position: relative;
+    z-index: 901;
+    cursor: pointer;
+    border: 1px solid lightgrey;
+    border-radius: 20px;
+    height: 24px;
+    width: 24px;
+    background-color: white;
+}
+
+.jet_lightbox_close span {
+    position: relative;
+    left: 8px;
+    top: 1px;
+    font-size: 16px;
+    font-family: monaco, Tahoma, Verdana, Arial, Helvetica, sans-serif;
+    color: grey;
+}
+
+.jet_tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.jet_tooltip .jet_tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #FFFBF0;
+    border: 1px solid #FFD967;
+    color: #000;
+    text-align: left;
+    padding: 5px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 99;
+    top: -5px;
+    left: 105%;
+}
+
+.jet_tooltip:hover .jet_tooltiptext {
+    visibility: visible;
+}

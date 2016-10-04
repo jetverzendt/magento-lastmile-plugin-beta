@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<layout>
+
+    <!-- Add css and js to Magento admin -->
+    <default>
+        <reference name="head">
+            <action method="addJs">
+                <script>jetverzendt/admin.js</script>
+            </action>
+            <action method="addCss">
+                <name>jetverzendt/all/jetverzendt.css</name>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="adminhtml/template"
+                   template="jetverzendt/ajax_functions.phtml" as="index" name="index">
+            </block>
+        </reference>
+        <!-- load blocks -->
+    </default>
+
+
+    <!-- Shipments -->
+    <!--<adminhtml_sales_order_shipment_new>
+        <reference name="form">
+            <action method="setTemplate">
+                <template>jetverzendt/sales/order/shipment/create/form.phtml</template>
+            </action>
+            <block type="jetverzendt/adminhtml_sales_order_shipment_info" name="jetverzendt_shipment"
+                   template="jetverzendt/sales/order/shipment/create/jetverzendt_shipment.phtml"/>
+        </reference>
+    </adminhtml_sales_order_shipment_new>-->
+
+    <adminhtml_sales_order_shipment_view>
+        <reference name="form">
+            <action method="setTemplate">
+                <template>jetverzendt/sales/order/shipment/view/form.phtml</template>
+            </action>
+            <block type="jetverzendt/adminhtml_sales_order_shipment_info" name="jetverzendt_shipment"
+                   template="jetverzendt/sales/order/shipment/view/jetverzendt_shipment.phtml"/>
+        </reference>
+    </adminhtml_sales_order_shipment_view>
+
+</layout>
