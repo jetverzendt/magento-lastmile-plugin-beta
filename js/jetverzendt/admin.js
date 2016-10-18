@@ -21,10 +21,10 @@ function jetverzendtUpdateOrders() {
     new Ajax.Request(jetverzendt_ajax_url, {
         method: 'get',
         onCreate: function (request) {
-            Ajax.Responders.unregister(varienLoaderHandler.handler);
+            Element.hide('loading_mask_loader');
         },
         onSuccess: function (transport) {
-            // do nothing
+            Element.show('loading_mask_loader');
         },
         onFailure: function () {
             //alert('Error');
