@@ -1,0 +1,375 @@
+<div id="jet_last_mile" style="display: block;">
+    <h4>Bezorg opties:</h4>
+    <?php
+    $jetShippers = Mage::helper('jetverzendt_shipping')->getShipmentShippers();
+    ?>
+
+    <div id="jet_last_mile_choice">
+        <strong>Uw gemaakte keuze: </strong><br/>
+        <span id="jet_name_lastmile"></span>
+        <a id="clear_last_mile" href="javascript:void(0)" class="jet_small" style="display: none">(wissen)</a>
+    </div>
+
+    <?php if (in_array('DHL', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileDeliveryDhlEnable() && Mage::helper('jetverzendt_shipping')->getQuoteShippingAddressCountry() == 'NL'
+        && Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(20)
+    ) : ?>
+        <div>
+            <a class="button lastmile-button" id="jet_link_deliver_dates">Kies een bezorgmoment</a>
+        </div>
+    <?php endif ?>
+
+    <?php if (in_array('DPD', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileSaterdayDpdEnable() && Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(31)) : ?>
+        <div>
+            <a class="button lastmile-button" id="jet_link_dpd_saterday">Zaterdaglevering<?php
+                $lastmilePriceDpdSaterday
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdSaterday();
+                if ($lastmilePriceDpdSaterday > 0) {
+                    echo ' ( + ' . Mage::helper('core')->currency($this->escapeHtml($lastmilePriceDpdSaterday, true, false)) . ')';
+                }
+                ?></a>
+        </div>
+    <?php endif ?>
+
+
+    <?php
+    $isLastmileDhlParcelshopEnable
+        = Mage::helper('jetverzendt_shipping')->isLastmileDhlParcelshopEnable();
+    $isLastmileDpdParcelshopEnable
+        = Mage::helper('jetverzendt_shipping')->isLastmileDpdParcelshopEnable();
+
+    if (Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(15) && ($isLastmileDhlParcelshopEnable || $isLastmileDpdParcelshopEnable)) :
+        ?>
+
+        <div>
+            <a class="button lastmile-button" id="jet_link_parcelshops">Kies een Parcelshop uit <?php
+                $lastmilePriceDhlParcelshop
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceDhlParcelshop();
+                $lastmilePriceDpdParcelshop
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdParcelshop();
+
+                if ($lastmilePriceDhlParcelshop > 0 || $lastmilePriceDpdParcelshop > 0) {
+                    echo ' ( + ';
+                }
+
+                if ($lastmilePriceDhlParcelshop > 0) {
+                    echo Mage::helper('core')->currency($this->escapeHtml($lastmilePriceDhlParcelshop, true, false));
+                }
+                if ($lastmilePriceDhlParcelshop > 0 && $lastmilePriceDpdParcelshop > 0) {
+                    echo ' / ';
+                }
+                if ($lastmilePriceDpdParcelshop > 0) {
+                    echo Mage::helper('core')->currency($this->escapeHtml($lastmilePriceDpdParcelshop, true, false));
+                }
+
+                if ($lastmilePriceDhlParcelshop > 0 || $lastmilePriceDpdParcelshop > 0) {
+                    echo ')';
+                }
+
+                ?></a>
+        </div>
+
+    <?php endif; ?>
+
+
+    <?php
+    $lastmileFadelloTime
+        = Mage::helper('jetverzendt_shipping')->getLastmileFadelloTime();
+    $checkValidWeightsForFadello
+        = Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(30);
+    if ($checkValidWeightsForFadello && in_array('Fadello', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileFadelloEnable() && Mage::getModel('core/date')->date('His') < $lastmileFadelloTime
+        && Mage::helper(
+            'jetverzendt_shipping'
+        )->getQuoteShippingAddressCountry() == 'NL'
+    ) :
+        ?>
+
+        <div>
+            <a class="button lastmile-button" id="jet_link_fadello">Vandaag Bezorgd <?php
+                $lastmilePriceFadello
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceFadello();
+                if ($lastmilePriceFadello > 0) {
+                    echo ' ( + ' . Mage::helper('core')->currency($this->escapeHtml($lastmilePriceFadello, true, false)) . ')';
+                }
+                ?></a>
+        </div>
+
+    <?php endif; ?>
+
+
+    <div id="lastmile_lightbox" style="display: none">
+        <div id="lastmile_lightbox_close">×</div>
+        <div id="lastmile_lightbox_content"></div>
+    </div>
+
+    <input type="hidden" name="lastmile_type" id="lastmile_type" value=""/>
+    <input type="hidden" name="lastmile_service" id="lastmile_service"/>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    var jetVerzendtShipmentMethod = '<?php echo $this->escapeHtml(Mage::helper('jetverzendt_shipping')->getJetVerzendtShipmentMethod()); ?>';
+
+    function checkIfMethodIsJetVerzendtMethod(option) {
+        if (option.search(jetVerzendtShipmentMethod) === 0) {
+            return true;
+        }
+        return false;
+    }
+
+    function checkIfOpenJetLastMileChoices() {
+        $$('input[type="radio"][name="shipping_method"]').each(function (el) {
+                if (el.checked == true) {
+                    var getShippingCode = el.getValue();
+                    if (checkIfMethodIsJetVerzendtMethod(getShippingCode)) {
+                        $('jet_last_mile').show();
+                    } else {
+                        if ($('lastmile_type') != undefined) $('lastmile_type').clear();
+                        if ($('lastmile_service') != undefined) $('lastmile_service').clear();
+                        if ($('lastmile_deliverdate') != undefined) $('lastmile_deliverdate').clear();
+                        if ($('lastmile_deliverperiod') != undefined)  $('lastmile_deliverperiod').clear();
+                        if ($('lastmile_deliverevening') != undefined) $('lastmile_deliverevening').clear();
+                        if ($('lastmile_parcelshop_id') != undefined) $('lastmile_parcelshop_id').clear();
+                        if ($('lastmile_parcelshop_description') != undefined) $('lastmile_parcelshop_description').clear();
+                        $('jet_last_mile').hide();
+                        setService();
+                    }
+                }
+            }
+        );
+    }
+
+    if ($('lastmile_lightbox_close') != undefined) {
+        Event.observe($('lastmile_lightbox_close'), 'click', function () {
+            $('lastmile_lightbox').hide();
+            return false;
+        });
+    }
+
+    if ($('jet_link_deliver_dates') != undefined) {
+        Event.observe($('jet_link_deliver_dates'), 'click', function () {
+            getDhlDeliverDates();
+            return false;
+        });
+    }
+
+
+    if ($('jet_link_dpd_saterday') != undefined) {
+        Event.observe($('jet_link_dpd_saterday'), 'click', function () {
+            getDpdSaterdayDates();
+            return false;
+        });
+    }
+
+
+    if ($('clear_last_mile') != undefined) {
+        Event.observe($('clear_last_mile'), 'click', function () {
+            $('jet_name_lastmile').update('');
+            $('lastmile_type').setValue('');
+            $('lastmile_service').setValue('');
+            $('jet_last_mile_choice').hide();
+            setService();
+        });
+    }
+
+
+    $$('input[type="radio"][name="shipping_method"]').each(function (el) {
+        Event.observe(el, 'click', function () {
+            checkIfOpenJetLastMileChoices();
+        });
+    });
+
+
+    if ($('jet_link_parcelshops') != undefined) {
+        Event.observe($('jet_link_parcelshops'), 'click', function () {
+            getParcelShops();
+            return false;
+        });
+    }
+
+
+    if ($('jet_link_fadello') != undefined) {
+        Event.observe($('jet_link_fadello'), 'click', function () {
+            $('lastmile_type').setValue('fadello');
+            $('lastmile_service').setValue('Fadello');
+            $('jet_name_lastmile').update('Vandaag Bezorgd');
+            $('jet_last_mile_choice').show();
+            $('clear_last_mile').show();
+
+        });
+    }
+
+
+    function getParcelShops() {
+        $('lastmile_lightbox').show();
+        $('lastmile_lightbox_content').update('Bezig met laden...');
+        new Ajax.Request('<?php echo Mage::getUrl('jetverzendt/parcelshop/popup') ?>', {
+            method: 'get',
+            onSuccess: function (transport) {
+                var response = transport.responseText || "";
+                $('lastmile_lightbox_content').update(response);
+
+            }
+        });
+    }
+
+
+    function getDpdSaterdayDates() {
+        $('lastmile_lightbox').show();
+        $('lastmile_lightbox_content').update('Bezig met laden...');
+        new Ajax.Request('<?php echo Mage::getUrl('jetverzendt/deliverdates/dpddates') ?>', {
+            method: 'get',
+            onSuccess: function (transport) {
+                var response = transport.responseText || "";
+                $('lastmile_lightbox_content').update(response);
+            }
+        });
+    }
+
+    function getDhlDeliverDates() {
+        $('lastmile_lightbox').show();
+        $('lastmile_lightbox_content').update('Bezig met laden...');
+        new Ajax.Request('<?php echo Mage::getUrl('jetverzendt/deliverdates/dhldates') ?>', {
+            method: 'get',
+            onSuccess: function (transport) {
+                var response = transport.responseText || "";
+                $('lastmile_lightbox_content').update(response);
+            }
+        });
+    }
+
+    function setService() {
+        var lastmile_type = '';
+        if ($('lastmile_type') != undefined) {
+            lastmile_type = $('lastmile_type').value;
+        }
+        var lastmile_service = '';
+        if ($('lastmile_service') != undefined) {
+            lastmile_service = $('lastmile_service').value;
+        }
+        var lastmile_deliverdate = '';
+        if ($('lastmile_deliverdate') != undefined) {
+            lastmile_deliverdate = $('lastmile_deliverdate').value;
+        }
+        var lastmile_deliverperiod = '';
+        if ($('lastmile_deliverperiod') != undefined) {
+            lastmile_deliverperiod = $('lastmile_deliverperiod').value;
+        }
+        var lastmile_deliverevening = '';
+        if ($('lastmile_deliverevening') != undefined) {
+            lastmile_deliverevening = $('lastmile_deliverevening').value;
+        }
+        var lastmile_parcelshop_id = '';
+        if ($('lastmile_parcelshop_id') != undefined) {
+            lastmile_parcelshop_id = $('lastmile_parcelshop_id').value;
+        }
+        var lastmile_parcelshop_description = '';
+        if ($('lastmile_parcelshop_description') != undefined) {
+            lastmile_parcelshop_description = $('lastmile_parcelshop_description').value;
+        }
+
+        var url = "<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate/')?>";
+        var totals = get_totals_element();
+        totals.update('<div class="loading-ajax">&nbsp;</div>');
+        arr_parameters = {
+            lastmile_type: lastmile_type,
+            lastmile_service: lastmile_service,
+            lastmile_deliverdate: lastmile_deliverdate,
+            lastmile_deliverperiod: lastmile_deliverperiod,
+            lastmile_deliverevening: lastmile_deliverevening,
+            lastmile_parcelshop_id: lastmile_parcelshop_id,
+            lastmile_parcelshop_description: lastmile_parcelshop_description
+        };
+
+        new Ajax.Request('<?php echo $this->getUrl('jetverzendt/parcelshop/saveselectedoption')?>', {
+            method: 'post',
+            parameters: arr_parameters,
+            onSuccess: function (transport) {
+
+                set_service_save_methods_function(url, false);
+            }
+        });
+    }
+
+
+    function set_service_save_methods_function(url, update_payments) {
+        if (typeof update_payments == 'undefined') {
+            var update_payments = false;
+        }
+        var form = $('onestepcheckout-form');
+        var shipping_method = $RF(form, 'shipping_method');
+        var payment_method = $RF(form, 'payment[method]');
+        var totals = get_totals_element();
+
+        var freeMethod = $('p_method_free');
+        if (freeMethod) {
+            payment.reloadcallback = true;
+            payment.countreload = 1;
+        }
+
+        totals.update('<div class="loading-ajax">&nbsp;</div>');
+
+        if (update_payments) {
+            var payment_methods = $$('div.payment-methods')[0];
+            payment_methods.update('<div class="loading-ajax">&nbsp;</div>');
+        }
+
+        var parameters = {
+            shipping_method: shipping_method,
+            payment_method: payment_method
+        }
+
+        /* Find payment parameters and include */
+        var items = $$('input[name^=payment]').concat($$('select[name^=payment]'));
+        var names = items.pluck('name');
+        var values = items.pluck('value');
+
+        for (var x = 0; x < names.length; x++) {
+            if (names[x] != 'payment[method]') {
+                parameters[names[x]] = values[x];
+            }
+        }
+
+        new Ajax.Request(url, {
+            method: 'post',
+            onSuccess: function (transport) {
+                if (transport.status == 200) {
+                    var data = transport.responseText.evalJSON();
+                    var form = $('onestepcheckout-form');
+
+                    totals.update(data.summary);
+
+                    if (update_payments) {
+
+                        payment_methods.replace(data.payment_method);
+
+                        $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', get_separate_save_methods_function(url));
+                        $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', function () {
+                            $$('div.onestepcheckout-payment-method-error').each(function (item) {
+                                new Effect.Fade(item);
+                            });
+                        });
+
+                        if ($RF($('onestepcheckout-form'), 'payment[method]') != null) {
+                            try {
+                                var payment_method = $RF(form, 'payment[method]');
+                                $('container_payment_method_' + payment_method).show();
+                                $('payment_form_' + payment_method).show();
+                            } catch (err) {
+
+                            }
+                        }
+                    }
+                }
+            },
+            onFailure: function (transport) {
+                window.location.replace(transport.transport.responseURL.replace('onestepcheckout/ajax/set_methods_separate/', 'checkout/cart/'));
+            },
+            parameters: parameters
+        });
+        // }
+    }
+
+    checkIfOpenJetLastMileChoices();
+
+    //]]>
+</script>

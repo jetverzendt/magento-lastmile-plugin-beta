@@ -37,11 +37,11 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
     // DHL Parcelshop
     const STORE_CONFIG_PATH_LASTMILE_DHL_PARCELSHOP_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_dhl_parcelshop_enable';
-    const STORE_CONFIG_PATH_LASTMILE_PRICE_DHL_PARCELSHOP = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_price_dhl_parcelshop';
+    const STORE_CONFIG_PATH_LASTMILE_PRICE_DHL_PARCELSHOP = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_dhl_parcelshop_price';
 
     // DPD Parcelshop
     const STORE_CONFIG_PATH_LASTMILE_DPD_PARCELSHOP_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_dpd_parcelshop_enable';
-    const STORE_CONFIG_PATH_LASTMILE_PRICE_DPD_PARCELSHOP = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_price_dpd_parcelshop';
+    const STORE_CONFIG_PATH_LASTMILE_PRICE_DPD_PARCELSHOP = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_dpd_parcelshop_price';
 
 
     const STORE_CONFIG_PATH_LASTMILE_GOOGLE_MAPS_KEY = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_google_maps_key';

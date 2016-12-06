@@ -118,7 +118,6 @@
                         <class>JetVerzendt_Shipping_Model_Adminhtml_Observer</class>
                         <method>addOrdersDropdownAction</method>
                     </jetverzendt_order_block_abstract_prepare_layout_before>
-
                 </observers>
             </core_block_abstract_prepare_layout_before>
 

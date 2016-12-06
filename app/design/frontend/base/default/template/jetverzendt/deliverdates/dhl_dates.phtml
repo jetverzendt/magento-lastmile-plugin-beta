@@ -58,7 +58,7 @@ if ($deliver && isset($deliver->schedule) && is_object($deliver->schedule) && co
                                 . '\'); $(\'lastmile_deliverevening\').setValue(\''
                                 . $this->escapeHtml(0) . '\'); $(\'lastmile_type\').setValue(\'dhl_deliverdate\'); $(\'jet_name_lastmile\').update(\'' . $this->escapeHtml(
                                     $date . ' | tijdstip: ' . $period
-                                ) . '\'); $(\'lastmile_lightbox\').hide(); return false; ">';
+                                ) . '\'); $(\'lastmile_lightbox\').hide(); setService(); return false; ">';
 
                             if ($arr_key == 1 && $period == '09:00-13:00') {
                                 echo $period;
@@ -82,7 +82,7 @@ if ($deliver && isset($deliver->schedule) && is_object($deliver->schedule) && co
                                     . '\'); $(\'lastmile_type\').setValue(\'dhl_deliverdate\'); $(\'lastmile_deliverevening\').setValue(\''
                                     . $this->escapeHtml(1) . '\'); $(\'jet_name_lastmile\').update(\'' . $this->escapeHtml(
                                         $date . ' | tijdstip: ' . $period
-                                    ) . '\'); $(\'lastmile_lightbox\').hide(); return false; ">';
+                                    ) . '\'); $(\'lastmile_lightbox\').hide(); setService(); $(\'clear_last_mile\').show(); return false; ">';
                                 echo $period;
                                 echo '</a>';
 

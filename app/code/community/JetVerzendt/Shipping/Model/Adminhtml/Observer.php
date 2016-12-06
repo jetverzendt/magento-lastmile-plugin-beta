@@ -7,85 +7,6 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
 {
 
     /**
-     * When save a new shipment, send the order to Jet Verzendt and save the Jet Verzendt Shipment ID
-     *
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     */
-    /*public function saveJetVerzendtShipmentData(Varien_Event_Observer $observer)
-    {
-
-        // current order_id
-        $requestData = Mage::app()->getRequest()->getParams();
-        $orderId     = $requestData['order_id'];
-
-        // get post data
-        $postData = Mage::app()->getRequest()->getPost();
-
-        // save post in session
-        Mage::getSingleton('core/session')->setShipmentPostData($postData);
-
-        // send/save only orders when assigned to Jet Verzendt
-        if (isset($postData['is_jetverzendt_active']) && $postData['is_jetverzendt_active']) {
-
-
-            $order  = Mage::getModel('sales/order')->load($orderId);
-            $result = Mage::helper('jetverzendt_shipping')->sendOrdersToJetVerzendt($order, $postData);
-
-            if (isset($result->shipment_id) && (int)$result->shipment_id > 0) { // request successful
-
-                // create new shipment row in jetverzendt shipment table
-                $new_shipment = Mage::getModel('jetverzendt_shipping/shipment');
-                $new_shipment->setMageOrderId($orderId);
-                $new_shipment->setNumberOfPackages($postData['jet_amount']);
-                $new_shipment->setPickupDate(
-                    (isset($_POST['jet_pickup_date']) && ! empty($_POST['jet_pickup_date'])) ? Mage::getModel('core/date')->date(
-                        'Y-m-d', strtotime($_POST['jet_pickup_date'])
-                    ) : Mage::getModel('core/date')->date('Y-m-d')
-                );
-                $new_shipment->setJetShipmentId($result->shipment_id);
-                $new_shipment->save();
-
-                $jetShipmentResult = $result->shipment_id;
-
-            } else { // jet error
-
-                if ( ! $result) { // no server connection
-                    $jetShipmentResult = 'Fout bij verbinding maken met Jet Verzendt portal. Controleer uw instellingen.';
-                } else {
-
-                    $jetShipmentResult = '';
-                    foreach ($result as $res) {
-                        foreach ($res as $r) {
-                            $jetShipmentResult .= "- " . $r . "<br/>";
-                        }
-                    }
-
-
-                }
-                Mage::getSingleton('core/session')->addError($jetShipmentResult);
-            }
-
-
-            if (Mage::getSingleton('core/session')->getMessages()->count() !== 0) { // if there are errors...
-
-                Mage::app()->getResponse()->setRedirect(
-                    Mage::helper('adminhtml')->getUrl(
-                        'sales_order_shipment/new',
-                        array('order_id' => $orderId)
-                    )
-                )->sendResponse();
-                exit;
-            }
-
-
-        }
-
-    }*/
-
-
-    /**
      * Get shipment data for admin shipment grid
      *
      * @param $observer
@@ -133,7 +54,6 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
             'main_table.entity_id = orders.entity_id',
             array('jet_last_mile' => 'orders.jet_last_mile')
         );
-        //die((string)$select);
     }
 
 
