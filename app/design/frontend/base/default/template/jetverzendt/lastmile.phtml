@@ -73,7 +73,7 @@
         = Mage::helper('jetverzendt_shipping')->getLastmileFadelloTime();
     $checkValidWeightsForFadello
         = Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(30);
-    if ($checkValidWeightsForFadello && in_array('FADELLO', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileFadelloEnable() && Mage::getModel('core/date')->date('His') < $lastmileFadelloTime
+    if ($checkValidWeightsForFadello && in_array('Fadello', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileFadelloEnable() && Mage::getModel('core/date')->date('His') < $lastmileFadelloTime
         && Mage::helper(
             'jetverzendt_shipping'
         )->getQuoteShippingAddressCountry() == 'NL'
@@ -179,7 +179,7 @@
     if ($('jet_link_fadello') != undefined) {
         Event.observe($('jet_link_fadello'), 'click', function () {
             $('lastmile_type').setValue('fadello');
-            $('lastmile_service').setValue('FADELLO');
+            $('lastmile_service').setValue('Fadello');
             $('jet_name_lastmile').update('Same Day Delivery');
             $('jet_last_mile_choice').show();
 
