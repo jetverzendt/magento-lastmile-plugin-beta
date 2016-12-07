@@ -441,6 +441,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                                                     = (isset($postData['parcel_shop_id'])
             && $postData['parcel_shop_id']) ? $postData['parcel_shop_id'] : '';
         $shipmentData['send_track_and_trace_email'] = $autoTrackTrace;
+        $shipmentData['input_source'] = 'magento';
 
         $apiStatus = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_LIVE_STATUS, Mage::app()->getStore()
