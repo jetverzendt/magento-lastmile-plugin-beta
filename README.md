@@ -12,9 +12,9 @@ Omdat het hier om een beta-versie gaat is het goed om na installatie alles goed 
 INSTALLATIE
 =========================================
 
-1. Kopi�ren van de bestanden
+1. Kopiëren van de bestanden
 
-Kopieer de bestanden van deze plugin naar de hoofdmap binnen uw Magento webshop. De eerstvolgende keer dat uw webshop bezocht wordt zal de plugin geïnstalleerd worden. Dat houdt in dat er een aantal tabellen wordt toegevoegd aan de database. Er worden geen wijzigingen aangebracht aan bestaande tabellen.
+Kopieer de bestanden van deze plugin naar de hoofdmap binnen uw Magento webshop. De eerstvolgende keer dat uw webshop bezocht wordt zal de plugin ge&iuml;nstalleerd worden. Dat houdt in dat er een aantal tabellen wordt toegevoegd aan de database. Er worden geen wijzigingen aangebracht aan bestaande tabellen.
 
 
 2. Vul de Jet Verzendt authorisatie gegevens in

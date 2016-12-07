@@ -27,10 +27,14 @@
                             Parcel)
                         </option>
                     <?php endif ?>
-                    <?php if (isset($shipmentShippers) && is_array($shipmentShippers) && in_array('FADELLO', $shipmentShippers)) : ?>
+                    <?php if (isset($shipmentShippers) && is_array($shipmentShippers) && in_array('Fadello', $shipmentShippers)) : ?>
                         <option class=""
-                                value="FADELLO">
-                            Fadello (zelfde dag levering)
+                                value="Fadello">Same Day Delivery</option>
+                    <?php endif ?>
+                    <?php if (isset($shipmentShippers) && is_array($shipmentShippers) && in_array('NextDayPremium', $shipmentShippers)) : ?>
+                        <option class=""
+                                value="NextDayPremium">
+                            Next Day Premium
                         </option>
                     <?php endif ?>
                 </select>
@@ -63,7 +67,7 @@
                    type="text">
         </td>
     </tr>
-    <tr class="jetverzendt_fields DHL DPD FADELLO">
+    <tr class="jetverzendt_fields DHL DPD Fadello NextDayPremium">
         <td class="label"><label>Service</label></td>
         <td class="value">
             <select class="" name="service" id="jet_service"
@@ -116,7 +120,7 @@
                 <option class="jetverzendt_fields DHL" value="PARCEL_SHOP">Parcelshop
                 </option>
 
-                <option class="jetverzendt_fields FADELLO" value="DEFAULT">Fadello Standaard
+                <option class="jetverzendt_fields Fadello NextDayPremium" value="DEFAULT">Standaard
                 </option>
             </select>
 

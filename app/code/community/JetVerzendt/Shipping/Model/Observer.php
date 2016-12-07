@@ -13,7 +13,6 @@ class JetVerzendt_Shipping_Model_Observer extends Mage_Core_Helper_Abstract
      */
     public function checkoutSaveShippingMethod(Varien_Event_Observer $observer)
     {
-
         $lastmile     = array();
         $lastmileType = $observer->getEvent()->getRequest()->getParam('lastmile_type');
 

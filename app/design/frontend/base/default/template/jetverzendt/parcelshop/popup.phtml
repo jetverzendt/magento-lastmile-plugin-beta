@@ -45,7 +45,7 @@
             });
 
             newmarker['infowindow'] = new google.maps.InfoWindow({
-                content: html
+                content: '<div class="infowindow-content">' + html + '</div>'
             });
 
             google.maps.event.addListener(newmarker, 'click', function () {

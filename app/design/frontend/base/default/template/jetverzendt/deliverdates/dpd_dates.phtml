@@ -36,7 +36,7 @@ if ($arrSaterdays) {
 
         echo ' <a onclick="$(\'jet_last_mile_choice\').show(); $(\'lastmile_deliverdate\').setValue(\'' . $this->escapeHtml($key)
             . '\');  $(\'lastmile_service\').setValue(\'DPD\'); $(\'lastmile_type\').setValue(\'dpd_saterday\');   $(\'jet_name_lastmile\').update(\'Zaterdaglevering: ' . $this->escapeHtml($val)
-            . '\'); $(\'lastmile_lightbox\').hide(); return false; ">';
+            . '\'); $(\'lastmile_lightbox\').hide(); setService();  $(\'clear_last_mile\').show(); return false; ">';
         echo 'Selecteer';
         echo '</a>';
 

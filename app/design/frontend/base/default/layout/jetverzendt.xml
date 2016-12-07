@@ -16,7 +16,63 @@
     </checkout_onepage_index>
     <checkout_onepage_shippingmethod>
         <reference name="root">
-            <block type="jetverzendt/lastmile" output="toHtml" name="jetverzendt_lastmile" template="jetverzendt/lastmile.phtml"/>
+            <block type="jetverzendt/lastmile" output="toHtml" name="jetverzendt_lastmile"
+                   template="jetverzendt/delivery_options/onepage/lastmile.phtml"/>
         </reference>
     </checkout_onepage_shippingmethod>
+
+
+    <onestepcheckout_index_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/jetverzendt.css</name>
+            </action>
+            <action method="addItem">
+                <type>js</type>
+                <name>jetverzendt/jetverzendt.js</name>
+            </action>
+        </reference>
+
+        <reference name="onestepcheckout.checkout">
+            <block type="checkout/agreements" name="checkout.onepage.agreements" as="agreements" template="onestepcheckout/agreements.phtml"/>
+            <block type="onestepcheckout/fields" as="billing_address" name="onestepcheckout.billing.address" template="onestepcheckout/billing_fields.phtml" />
+            <block type="onestepcheckout/fields" as="shipping_address" name="onestepcheckout.shipping.address" template="onestepcheckout/shipping_fields.phtml" />
+            <block type="onestepcheckout/summary" as="summary" name="onestepcheckout.summary" template="onestepcheckout/summary.phtml" />
+            <block type="checkout/onepage_payment_methods" name="choose-payment-method" template="onestepcheckout/payment_method.phtml">
+                <action method="setMethodFormTemplate"><method>purchaseorder</method><template>payment/form/purchaseorder.phtml</template></action>
+            </block>
+            <block type="checkout/onepage_shipping_method_available" name="choose-shipping-method" template="jetverzendt/delivery_options/onestepcheckout/shipping_method.phtml">
+                <block type="jetverzendt/lastmile" name="jetverzendt_lastmile"
+                       template="jetverzendt/delivery_options/onestepcheckout/lastmile.phtml"/>
+            </block>
+        </reference>
+
+        <reference name="before_body_end">
+            <block type="jetverzendt/js" name="jetverzendt_js" template="jetverzendt/js.phtml"/>
+        </reference>
+
+    </onestepcheckout_index_index>
+
+    <onestepcheckout_ajax_save_billing>
+        <reference name="billing">
+            <block type="checkout/onepage_payment_methods" name="choose-payment-method" template="onestepcheckout/payment_method.phtml" as="choose-payment-method">
+                <action method="setMethodFormTemplate"><method>purchaseorder</method><template>payment/form/purchaseorder.phtml</template></action>
+            </block>
+            <block type="checkout/onepage_shipping_method_available" name="choose-shipping-method" template="jetverzendt/delivery_options/onestepcheckout/shipping_method.phtml">
+                <block type="jetverzendt/lastmile" name="jetverzendt_lastmile"
+                       template="jetverzendt/delivery_options/onestepcheckout/lastmile.phtml"/>
+            </block>
+            <block type="onestepcheckout/summary" as="summary" name="onestepcheckout.summary" template="onestepcheckout/summary.phtml">
+                <block type="core/template" as="preview" name="onestepcheckout.summary.preview" template="onestepcheckout/preview/preview.phtml" />
+            </block>
+            <block type="checkout/cart_totals" name="checkout.cart.totals" as="totals" template="checkout/cart/totals.phtml"/>
+        </reference>
+
+        <reference name="before_body_end">
+            <block type="jetverzendt/js" name="jetverzendt_js" template="jetverzendt/js.phtml"/>
+        </reference>
+    </onestepcheckout_ajax_save_billing>
+
 </layout>
+

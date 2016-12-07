@@ -54,7 +54,7 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
             $country  = $this->getRequest()->getPost('country');
             $number   = $this->getRequest()->getPost('number');
 
-            if (isset($zip_code) && ! empty($zip_code) && isset($country) && ! empty($country) && isset($number) && ! empty($number)) {
+            if (isset($zip_code) && !empty($zip_code) && isset($country) && !empty($country) && isset($number) && !empty($number)) {
                 $address['zip_code'] = $zip_code;
                 $address['country']  = $country;
                 $address['number']   = $number;
@@ -81,9 +81,9 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
                                     $marker = Mage::getDesign()->getSkinUrl('images/jetverzendt/marker_dpd.png', array('_secure' => true));
 
                                 }
-                                $result[] = array('lat'    => $shop->latitude,
-                                                  'lng'    => $shop->longitude,
-                                                  'html'   => $block->toHtml(),
+                                $result[] = array('lat' => $shop->latitude,
+                                                  'lng' => $shop->longitude,
+                                                  'html' => $block->toHtml(),
                                                   'marker' => $marker);
                             }
                         }
@@ -94,6 +94,91 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
             echo json_encode($result);
             exit;
         }
+    }
+
+    protected function _getOnepage()
+    {
+        return Mage::getSingleton('checkout/type_onepage');
+    }
+
+    public function saveSelectedOptionAction()
+    {
+        $lastmile     = array();
+        $lastmileType = $this->getRequest()->getParam('lastmile_type');
+
+        $shipmentFee = 0;
+        Mage::getSingleton('core/session')->setLastmileShipmentFee($shipmentFee); // reset fee
+
+        if (isset($lastmileType) && $lastmileType == 'dhl_deliverdate') {
+            $lastmile['type']                    = $lastmileType;
+            $lastmile['lastmile_service']        = $this->getRequest()->getParam('lastmile_service');
+            $lastmile['lastmile_deliverdate']    = $this->getRequest()->getParam('lastmile_deliverdate');
+            $lastmile['lastmile_deliverperiod']  = $this->getRequest()->getParam('lastmile_deliverperiod');
+            $lastmile['lastmile_deliverevening'] = $this->getRequest()->getParam('lastmile_deliverevening');
+
+            if ($lastmile['lastmile_deliverevening']) {
+                $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceDhlEvening();
+            }
+
+            $lastmile['lastmile_fee'] = $shipmentFee;
+
+        } else if (isset($lastmileType) && $lastmileType == 'dpd_saterday') {
+            $lastmile['type']                 = $lastmileType;
+            $lastmile['lastmile_service']     = $this->getRequest()->getParam('lastmile_service');
+            $lastmile['lastmile_deliverdate'] = $this->getRequest()->getParam('lastmile_deliverdate');
+
+            $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdSaterday();
+
+            $lastmile['lastmile_fee'] = $shipmentFee;
+
+        } else if (isset($lastmileType) && $lastmileType == 'fadello') {
+            $lastmile['type'] = $lastmileType;
+
+            $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceFadello();
+
+            $lastmile['lastmile_fee'] = $shipmentFee;
+
+        } else if (isset($lastmileType) && $lastmileType == 'parcelshop') {
+            $lastmile['type']                            = $lastmileType;
+            $lastmile['lastmile_service']                = $this->getRequest()->getParam('lastmile_service');
+            $lastmile['lastmile_parcelshop_id']          = $this->getRequest()->getParam('lastmile_parcelshop_id');
+            $lastmile['lastmile_parcelshop_description'] = $this->getRequest()->getParam('lastmile_parcelshop_description');
+
+            if ($lastmile['lastmile_service'] == 'DHL') {
+                $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceDhlParcelshop();
+            } elseif ($lastmile['lastmile_service'] == 'DPD') {
+                $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdParcelshop();
+            }
+
+            $lastmile['lastmile_fee'] = $shipmentFee;
+
+        }
+        $result = array();
+        if (!empty($lastmile)) {
+            try {
+                $this->_getOnepage()->getQuote()
+                    ->setJetLastMile(serialize($lastmile))
+                    ->save();
+                Mage::getSingleton('core/session')->setLastmileShipmentFee($shipmentFee);
+                $result['error'] = false;
+            } catch (Exception $e) {
+                Mage::logException($e);
+                $result['error'] = true;
+            }
+        } else {
+            try {
+                $this->_getOnepage()->getQuote()
+                    ->setJetLastMile('')
+                    ->save();
+                Mage::getSingleton('core/session')->setLastmileShipmentFee(0);
+                $result['error'] = false;
+            } catch (Exception $e) {
+                Mage::logException($e);
+                $result['error'] = true;
+            }
+        }
+
+        $this->getResponse()->setBody(Zend_Json::encode($result));
     }
 
 

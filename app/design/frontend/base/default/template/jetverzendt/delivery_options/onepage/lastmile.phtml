@@ -1,0 +1,234 @@
+<div id="jet_last_mile" style="">
+    <?php
+    $jetShippers = Mage::helper('jetverzendt_shipping')->getShipmentShippers();
+    ?>
+
+    <div id="jet_last_mile_choice" style="display: none">
+        <strong>Uw gemaakte keuze: </strong><br/>
+        <span id="jet_name_lastmile"></span>
+        <a id="clear_last_mile" href="javascript:void(0)" class="jet_small">(wissen)</a>
+    </div>
+
+    <?php if (in_array('DHL', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileDeliveryDhlEnable() && Mage::helper('jetverzendt_shipping')->getQuoteShippingAddressCountry() == 'NL' && Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(20)) : ?>
+        <div>
+            <a class="button lastmile-button" id="jet_link_deliver_dates">Kies een bezorgmoment</a>
+        </div>
+    <?php endif ?>
+
+    <?php if (in_array('DPD', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileSaterdayDpdEnable() && Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(31)) : ?>
+        <div>
+            <a class="button lastmile-button" id="jet_link_dpd_saterday">Zaterdaglevering<?php
+                $lastmilePriceDpdSaterday
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdSaterday();
+                if ($lastmilePriceDpdSaterday > 0) {
+                    echo ' ( + ' . Mage::helper('core')->currency($this->escapeHtml($lastmilePriceDpdSaterday, true, false)) . ')';
+                }
+                ?></a>
+        </div>
+    <?php endif ?>
+
+
+    <?php
+    $isLastmileDhlParcelshopEnable
+        = Mage::helper('jetverzendt_shipping')->isLastmileDhlParcelshopEnable();
+    $isLastmileDpdParcelshopEnable
+        = Mage::helper('jetverzendt_shipping')->isLastmileDpdParcelshopEnable();
+
+    if (Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(15) && ($isLastmileDhlParcelshopEnable || $isLastmileDpdParcelshopEnable)) :
+        ?>
+
+        <div>
+            <a class="button lastmile-button" id="jet_link_parcelshops">Kies een Parcelshop  uit <?php
+                $lastmilePriceDhlParcelshop
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceDhlParcelshop();
+                $lastmilePriceDpdParcelshop
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdParcelshop();
+
+                if ($lastmilePriceDhlParcelshop > 0 || $lastmilePriceDpdParcelshop > 0) {
+                    echo ' ( + ';
+                }
+
+                if ($lastmilePriceDhlParcelshop > 0) {
+                    echo Mage::helper('core')->currency($this->escapeHtml($lastmilePriceDhlParcelshop, true, false));
+                }
+                if ($lastmilePriceDhlParcelshop > 0 && $lastmilePriceDpdParcelshop > 0) {
+                    echo ' / ';
+                }
+                if ($lastmilePriceDpdParcelshop > 0) {
+                    echo Mage::helper('core')->currency($this->escapeHtml($lastmilePriceDpdParcelshop, true, false));
+                }
+
+                if ($lastmilePriceDhlParcelshop > 0 || $lastmilePriceDpdParcelshop > 0) {
+                    echo ')';
+                }
+
+                ?></a>
+        </div>
+
+    <?php endif; ?>
+
+
+    <?php
+    $lastmileFadelloTime
+        = Mage::helper('jetverzendt_shipping')->getLastmileFadelloTime();
+    $checkValidWeightsForFadello
+        = Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(30);
+    if ($checkValidWeightsForFadello && in_array('Fadello', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileFadelloEnable() && Mage::getModel('core/date')->date('His') < $lastmileFadelloTime
+        && Mage::helper(
+            'jetverzendt_shipping'
+        )->getQuoteShippingAddressCountry() == 'NL'
+    ) :
+        ?>
+
+        <div>
+            <a class="button lastmile-button" id="jet_link_fadello">Vandaag Bezorgd <?php
+                $lastmilePriceFadello
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceFadello();
+                if ($lastmilePriceFadello > 0) {
+                    echo ' ( + ' . Mage::helper('core')->currency($this->escapeHtml($lastmilePriceFadello, true, false)) . ')';
+                }
+                ?></a>
+        </div>
+
+    <?php endif; ?>
+
+
+    <div id="lastmile_lightbox" style="display: none">
+        <div id="lastmile_lightbox_close">×</div>
+        <div id="lastmile_lightbox_content"></div>
+    </div>
+
+    <input type="hidden" name="lastmile_type" id="lastmile_type" value=""/>
+    <input type="hidden" name="lastmile_service" id="lastmile_service"/>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    var jetVerzendtShipmentMethod = '<?php echo $this->escapeHtml(Mage::helper('jetverzendt_shipping')->getJetVerzendtShipmentMethod()); ?>';
+
+    function checkIfMethodIsJetVerzendtMethod(option) {
+        if (option.search(jetVerzendtShipmentMethod) === 0) {
+            return true;
+        }
+        return false;
+    }
+
+    function checkIfOpenJetLastMileChoices() {
+        $$('input[type="radio"][name="shipping_method"]').each(function (el) {
+            if (el.checked == true) {
+                var getShippingCode = el.getValue();
+                if (checkIfMethodIsJetVerzendtMethod(getShippingCode)) {
+                    $('jet_last_mile').show();
+                } else {
+                    $('jet_last_mile').hide();
+                }
+            }
+        });
+    }
+
+    if ($('lastmile_lightbox_close') != undefined) {
+        Event.observe($('lastmile_lightbox_close'), 'click', function () {
+            $('lastmile_lightbox').hide();
+            return false;
+        });
+    }
+
+    if ($('jet_link_deliver_dates') != undefined) {
+        Event.observe($('jet_link_deliver_dates'), 'click', function () {
+            getDhlDeliverDates();
+            return false;
+        });
+    }
+
+
+    if ($('jet_link_dpd_saterday') != undefined) {
+        Event.observe($('jet_link_dpd_saterday'), 'click', function () {
+            getDpdSaterdayDates();
+            return false;
+        });
+    }
+
+
+    if ($('clear_last_mile') != undefined) {
+        Event.observe($('clear_last_mile'), 'click', function () {
+            $('jet_name_lastmile').update('');
+            $('lastmile_type').setValue('');
+            $('lastmile_service').setValue('');
+            $('jet_last_mile_choice').hide();
+        });
+    }
+
+
+    $$('input[type="radio"][name="shipping_method"]').each(function (el) {
+        Event.observe(el, 'click', function () {
+            checkIfOpenJetLastMileChoices();
+        });
+    });
+
+
+    if ($('jet_link_parcelshops') != undefined) {
+        Event.observe($('jet_link_parcelshops'), 'click', function () {
+            getParcelShops();
+            return false;
+        });
+    }
+
+
+    if ($('jet_link_fadello') != undefined) {
+        Event.observe($('jet_link_fadello'), 'click', function () {
+            $('lastmile_type').setValue('fadello');
+            $('lastmile_service').setValue('Fadello');
+            $('jet_name_lastmile').update('Vandaag Bezorgd');
+            $('jet_last_mile_choice').show();
+
+        });
+    }
+
+
+    function getParcelShops() {
+        $('lastmile_lightbox').show();
+        $('lastmile_lightbox_content').update('Bezig met laden...');
+        new Ajax.Request('<?php echo Mage::getUrl('jetverzendt/parcelshop/popup') ?>', {
+            method: 'get',
+            onSuccess: function (transport) {
+                var response = transport.responseText || "";
+                $('lastmile_lightbox_content').update(response);
+
+            }
+        });
+    }
+
+
+    function getDpdSaterdayDates() {
+        $('lastmile_lightbox').show();
+        $('lastmile_lightbox_content').update('Bezig met laden...');
+        new Ajax.Request('<?php echo Mage::getUrl('jetverzendt/deliverdates/dpddates') ?>', {
+            method: 'get',
+            onSuccess: function (transport) {
+                var response = transport.responseText || "";
+                $('lastmile_lightbox_content').update(response);
+            }
+        });
+    }
+
+    function getDhlDeliverDates() {
+        $('lastmile_lightbox').show();
+        $('lastmile_lightbox_content').update('Bezig met laden...');
+        new Ajax.Request('<?php echo Mage::getUrl('jetverzendt/deliverdates/dhldates') ?>', {
+            method: 'get',
+            onSuccess: function (transport) {
+                var response = transport.responseText || "";
+                $('lastmile_lightbox_content').update(response);
+            }
+        });
+    }
+
+    function setService(){
+        // nothing
+    }
+
+    checkIfOpenJetLastMileChoices();
+
+
+    //]]>
+</script>
