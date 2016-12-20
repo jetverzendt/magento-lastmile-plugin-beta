@@ -35,6 +35,10 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     const STORE_CONFIG_PATH_LASTMILE_FADELLO_TIME = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_fadello_time';
     const STORE_CONFIG_PATH_LASTMILE_FADELLO_PRICE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_fadello_price';
 
+    // Fadello
+    const STORE_CONFIG_PATH_LASTMILE_NEXTDAYPREMIUM_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_nextdaypremium_enable';
+    const STORE_CONFIG_PATH_LASTMILE_NEXTDAYPREMIUM_PRICE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_nextdaypremium_price';
+
     // DHL Parcelshop
     const STORE_CONFIG_PATH_LASTMILE_DHL_PARCELSHOP_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_dhl_parcelshop_enable';
     const STORE_CONFIG_PATH_LASTMILE_PRICE_DHL_PARCELSHOP = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_dhl_parcelshop_price';
@@ -195,6 +199,18 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
+     * @return mixed
+     */
+    public function isLastmileNextDayPremiumEnable()
+    {
+        return Mage::getStoreConfig(
+            self::STORE_CONFIG_PATH_LASTMILE_NEXTDAYPREMIUM_ENABLE,
+            Mage::app()->getStore()
+        );
+    }
+
+
+    /**
      * Check with a date if the DHL deliver box can be shown
      *
      * @return mixed
@@ -276,6 +292,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $deliveryTime;
     }
+
 
 
     /**
@@ -911,6 +928,22 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $price = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_LASTMILE_FADELLO_PRICE,
+            Mage::app()->getStore()
+        );
+        if (isset($price)) {
+            return str_replace(',', '.', $price);
+        }
+
+        return 0;
+    }
+
+    /**
+     * @return int|mixed
+     */
+    public function getLastmilePriceNextDayPremium()
+    {
+        $price = Mage::getStoreConfig(
+            self::STORE_CONFIG_PATH_LASTMILE_NEXTDAYPREMIUM_PRICE,
             Mage::app()->getStore()
         );
         if (isset($price)) {

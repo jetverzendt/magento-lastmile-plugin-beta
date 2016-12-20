@@ -84,7 +84,7 @@
         ?>
 
         <div>
-            <a class="button lastmile-button" id="jet_link_fadello">Vandaag Bezorgd <?php
+            <a class="button lastmile-button" id="jet_link_fadello">Same Day Delivery <?php
                 $lastmilePriceFadello
                     = Mage::helper('jetverzendt_shipping')->getLastmilePriceFadello();
                 if ($lastmilePriceFadello > 0) {
@@ -94,6 +94,31 @@
         </div>
 
     <?php endif; ?>
+
+
+
+    <?php
+    $checkValidWeightsForNextDayPremium
+        = Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(30);
+    if ($checkValidWeightsForNextDayPremium && in_array('NextDayPremium', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileNextDayPremiumEnable()
+        && Mage::helper(
+            'jetverzendt_shipping'
+        )->getQuoteShippingAddressCountry() == 'NL'
+    ) :
+        ?>
+
+        <div>
+            <a class="button lastmile-button" id="jet_link_nextdaypremium">Next Day Delivery <?php
+                $lastmilePriceNextDayPremium
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceNextDayPremium();
+                if ($lastmilePriceNextDayPremium > 0) {
+                    echo ' ( + ' . Mage::helper('core')->currency($this->escapeHtml($lastmilePriceNextDayPremium, true, false)) . ')';
+                }
+                ?></a>
+        </div>
+
+    <?php endif; ?>
+
 
 
     <div id="lastmile_lightbox" style="display: none">
@@ -126,7 +151,7 @@
                         if ($('lastmile_type') != undefined) $('lastmile_type').clear();
                         if ($('lastmile_service') != undefined) $('lastmile_service').clear();
                         if ($('lastmile_deliverdate') != undefined) $('lastmile_deliverdate').clear();
-                        if ($('lastmile_deliverperiod') != undefined)  $('lastmile_deliverperiod').clear();
+                        if ($('lastmile_deliverperiod') != undefined) $('lastmile_deliverperiod').clear();
                         if ($('lastmile_deliverevening') != undefined) $('lastmile_deliverevening').clear();
                         if ($('lastmile_parcelshop_id') != undefined) $('lastmile_parcelshop_id').clear();
                         if ($('lastmile_parcelshop_description') != undefined) $('lastmile_parcelshop_description').clear();
@@ -191,9 +216,20 @@
         Event.observe($('jet_link_fadello'), 'click', function () {
             $('lastmile_type').setValue('fadello');
             $('lastmile_service').setValue('Fadello');
-            $('jet_name_lastmile').update('Vandaag Bezorgd');
+            $('jet_name_lastmile').update('Same Day Delivery');
             $('jet_last_mile_choice').show();
             $('clear_last_mile').show();
+
+        });
+    }
+
+
+    if ($('jet_link_nextdaypremium') != undefined) {
+        Event.observe($('jet_link_nextdaypremium'), 'click', function () {
+            $('lastmile_type').setValue('nextdaypremium');
+            $('lastmile_service').setValue('NextDayPremium');
+            $('jet_name_lastmile').update('Next Day Delivery');
+            $('jet_last_mile_choice').show();
 
         });
     }

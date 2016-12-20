@@ -138,6 +138,13 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
 
             $lastmile['lastmile_fee'] = $shipmentFee;
 
+        } else if (isset($lastmileType) && $lastmileType == 'nextdaypremium') {
+            $lastmile['type'] = $lastmileType;
+
+            $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceNextDayPremium();
+
+            $lastmile['lastmile_fee'] = $shipmentFee;
+
         } else if (isset($lastmileType) && $lastmileType == 'parcelshop') {
             $lastmile['type']                            = $lastmileType;
             $lastmile['lastmile_service']                = $this->getRequest()->getParam('lastmile_service');

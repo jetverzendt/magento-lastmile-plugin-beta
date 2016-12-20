@@ -30,7 +30,7 @@ class JetVerzendt_Shipping_Model_Observer extends Mage_Core_Helper_Abstract
                 $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceDhlEvening();
             }
 
-	        $lastmile['lastmile_fee'] = $shipmentFee;
+            $lastmile['lastmile_fee'] = $shipmentFee;
 
         } else if (isset($lastmileType) && $lastmileType == 'dpd_saterday') {
             $lastmile['type']                 = $lastmileType;
@@ -39,14 +39,21 @@ class JetVerzendt_Shipping_Model_Observer extends Mage_Core_Helper_Abstract
 
             $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdSaterday();
 
-	        $lastmile['lastmile_fee'] = $shipmentFee;
+            $lastmile['lastmile_fee'] = $shipmentFee;
 
-        }else if (isset($lastmileType) && $lastmileType == 'fadello') {
-            $lastmile['type']                 = $lastmileType;
+        } else if (isset($lastmileType) && $lastmileType == 'fadello') {
+            $lastmile['type'] = $lastmileType;
 
             $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceFadello();
 
-	        $lastmile['lastmile_fee'] = $shipmentFee;
+            $lastmile['lastmile_fee'] = $shipmentFee;
+
+        } else if (isset($lastmileType) && $lastmileType == 'nextdaypremium') {
+            $lastmile['type'] = $lastmileType;
+
+            $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceNextDayPremium();
+
+            $lastmile['lastmile_fee'] = $shipmentFee;
 
         } else if (isset($lastmileType) && $lastmileType == 'parcelshop') {
             $lastmile['type']                            = $lastmileType;
@@ -60,11 +67,11 @@ class JetVerzendt_Shipping_Model_Observer extends Mage_Core_Helper_Abstract
                 $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdParcelshop();
             }
 
-	        $lastmile['lastmile_fee'] = $shipmentFee;
+            $lastmile['lastmile_fee'] = $shipmentFee;
 
         }
 
-        if ( ! empty($lastmile)) {
+        if (!empty($lastmile)) {
 
             try {
                 $observer->getEvent()->getQuote()
@@ -104,8 +111,6 @@ class JetVerzendt_Shipping_Model_Observer extends Mage_Core_Helper_Abstract
 
         return $this;
     }
-
-
 
 
 }

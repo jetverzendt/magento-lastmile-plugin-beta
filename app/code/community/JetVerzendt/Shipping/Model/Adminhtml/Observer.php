@@ -30,12 +30,7 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
                 'group_concat( "<a href=", `package`.track_trace_url, ">", CONCAT(`package`.track_trace_key), "</a>" SEPARATOR "<br/>")'
             ))
         );
-        $select->joinLeft(
-            array('orders' => $collection->getTable(
-                'sales/order'
-            )), 'main_table.order_id = orders.entity_id',
-            array('jet_last_mile' => 'orders.jet_last_mile')
-        );
+
         $select->group('main_table.entity_id');
         //die((string)$select);
     }
@@ -46,7 +41,7 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
      *
      * @param $observer
      */
-    public function salesOrderGridCollectionLoadBefore($observer)
+/*    public function salesOrderGridCollectionLoadBefore($observer)
     {
         $collection = $observer->getOrderGridCollection();
         $collection->getSelect()->join(
@@ -54,7 +49,7 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
             'main_table.entity_id = orders.entity_id',
             array('jet_last_mile' => 'orders.jet_last_mile')
         );
-    }
+    }*/
 
 
     /**

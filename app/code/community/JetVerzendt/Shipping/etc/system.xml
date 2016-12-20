@@ -231,9 +231,9 @@
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_saterday_dpd_price>
 
-                        <!-- Fadello -->
+                        <!-- Fadello/Same Day Delivery -->
                         <jetverzendt_lastmile_fadello_enable translate="label comment">
-                            <label>Fadello actief:</label>
+                            <label>Same Day Delivery actief:</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>40</sort_order>
@@ -243,9 +243,9 @@
                         </jetverzendt_lastmile_fadello_enable>
 
                         <jetverzendt_lastmile_fadello_time translate="label comment">
-                            <label>Uiterlijk tijdstip Fadello:</label>
+                            <label>Uiterlijk tijdstip Same Day Delivery:</label>
                             <comment>
-                                <![CDATA[Wat is dagelijks het uiterlijke tijdstip tot wanneer een verzending met Fadello nog mogelijk is? Dit kan het tijdstip zijn dat uw bestellingen dagelijks door de vervoerder bij u worden opgehaald, bijvoorbeeld 13:00:00 uur. ]]></comment>
+                                <![CDATA[Wat is dagelijks het uiterlijke tijdstip tot wanneer een verzending met Same Day Delivery nog mogelijk is? Dit kan het tijdstip zijn dat uw bestellingen dagelijks door de vervoerder bij u worden opgehaald, bijvoorbeeld 13:00:00 uur. ]]></comment>
                             <frontend_type>time</frontend_type>
                             <sort_order>42</sort_order>
                             <show_in_default>1</show_in_default>
@@ -254,7 +254,7 @@
                         </jetverzendt_lastmile_fadello_time>
 
                         <jetverzendt_lastmile_fadello_price translate="label comment">
-                            <label>Evt. meerprijs Fadello:</label>
+                            <label>Evt. meerprijs Same Day Delivery:</label>
                             <comment>
                                 <![CDATA[Voorbeeld: 9.95<br/><br/><br/><br/>]]></comment>
                             <validate>validate-zero-or-greater</validate>
@@ -264,6 +264,29 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_fadello_price>
+
+                        <!-- Next Day Premium -->
+                        <jetverzendt_lastmile_nextdaypremium_enable translate="label comment">
+                            <label>Next Day Premium actief:</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>46</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </jetverzendt_lastmile_nextdaypremium_enable>
+
+                        <jetverzendt_lastmile_nextdaypremium_price translate="label comment">
+                            <label>Evt. meerprijs Next Day Premium:</label>
+                            <comment>
+                                <![CDATA[Voorbeeld: 9.95<br/><br/><br/><br/>]]></comment>
+                            <validate>validate-zero-or-greater</validate>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>47</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </jetverzendt_lastmile_nextdaypremium_price>
 
                         <!-- Parcelshop DHL -->
                         <jetverzendt_lastmile_dhl_parcelshop_enable translate="label comment">

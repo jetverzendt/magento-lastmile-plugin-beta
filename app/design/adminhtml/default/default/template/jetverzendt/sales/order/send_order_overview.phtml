@@ -90,6 +90,8 @@ if ( count( $orders ) == 0 ) :
 							</td>
 							<td>
 								<?php
+                                $jetLastmileComment = '';
+                                $jetShipmentSetting = '';
 								if ( $order->getJetLastMile() ) {
 									$jetDefaultOrder = 0;
 
@@ -123,7 +125,16 @@ if ( count( $orders ) == 0 ) :
 									}
 
 
-									if ( isset( $lastMileData['type'] )
+                                    if ( isset( $lastMileData['type'] )
+                                        && $lastMileData['type'] == 'nextdaypremium'
+                                    ) {
+                                        $jetLastmileComment = '<strong>Next Day Delivery</strong>';
+                                        $jetShipmentSetting = 'product=NextDayPremium&service=DEFAULT';
+                                    }
+
+
+
+                                    if ( isset( $lastMileData['type'] )
 									     && $lastMileData['type'] == 'parcelshop'
 									     && isset( $lastMileData['lastmile_service'] )
 									     && isset( $lastMileData['lastmile_parcelshop_id'] )
