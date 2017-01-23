@@ -19,7 +19,7 @@ Kopieer de bestanden van deze plugin naar de hoofdmap binnen uw Magento webshop.
 
 2. Vul de Jet Verzendt authorisatie gegevens in
 
-Om de plugin te koppelen met het KeenPortal heeft u authorisatiegegevens nodig. Deze gegevens ontvangt u van KeenDelivery. Deze authorisatiegegevens kunt u invoeren in het Magento configuratiescherm (System / Configuration / KeenDelivery instellingen) onder het kopje API authorisatiegegevens. Hier kunt u tevens aangeven of u de koppeling eerst wilt testen.
+Om de plugin te koppelen met de KeenPortal heeft u authorisatiegegevens nodig. Deze gegevens ontvangt u van KeenDelivery. Deze authorisatiegegevens kunt u invoeren in het Magento configuratiescherm (System / Configuration / KeenDelivery instellingen) onder het kopje API authorisatiegegevens. Hier kunt u tevens aangeven of u de koppeling eerst wilt testen.
 
 
 3. Geef aan welke verzendmethoden naar KeenDelivery verstuurd moeten worden
