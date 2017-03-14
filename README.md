@@ -1,5 +1,5 @@
 =========================================
-KeenDelivery met Last Mile (beta-versie!)
+KeenDelivery met Last Mile
 =========================================
 
 Deze Magento versie is een eerste beta-versie waarin de Last Mile verwerkt is. Dit houdt in dat klanten op de checkout pagina van Magento een bezorgmoment of Parcelshop kunnen uitkiezen.
