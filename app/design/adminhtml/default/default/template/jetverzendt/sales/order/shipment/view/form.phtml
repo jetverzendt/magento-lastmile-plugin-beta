@@ -1,6 +1,6 @@
 <?php
 /**
- * Jet Verzendt copy of Mage form.phtml with custom addition
+ * KeenDelivery copy of Mage form.phtml with custom addition
  */
 ?>
 <?php $_order = $this->getShipment()->getOrder() ?>
@@ -61,7 +61,7 @@
             <div>
                 <?php
                 /*
-                 * Jet Verzendt addition
+                 * KeenDelivery addition
                  */
                 $isJetVerzendtOrder = (Mage::helper('jetverzendt_shipping')->isJetVerzendtOrder($this->getShipment()->getOrderId())) ? true : false;
                 if ($isJetVerzendtOrder) {
@@ -70,7 +70,7 @@
                     echo $this->getChildHtml('shipment_tracking');
                 }
                 /*
-                * End Jet Verzendt addition
+                * End KeenDelivery addition
                 */
                 ?>
             </div>

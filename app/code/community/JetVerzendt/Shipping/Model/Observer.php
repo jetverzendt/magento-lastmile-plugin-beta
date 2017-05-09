@@ -3,6 +3,40 @@
 class JetVerzendt_Shipping_Model_Observer extends Mage_Core_Helper_Abstract
 {
 
+    public function salesQuoteCollectTotalsBefore(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Sales_Model_Quote $quote */
+        $quote           = $observer->getQuote();
+        $newHandlingFee  = Mage::getSingleton('core/session')->getLastmileShipmentFee();
+        $newHandlingName = Mage::getSingleton('core/session')->getLastmileShipmentName();
+
+        $store    = Mage::app()->getStore($quote->getStoreId());
+        $carriers = Mage::getStoreConfig('carriers', $store);
+        $currentShipmentMethod = $quote->getShippingAddress()->getShippingMethod();
+        $jetShipmentMethod     = Mage::helper('jetverzendt_shipping')->getJetVerzendtShipmentMethod();
+        foreach ($carriers as $carrierCode => $carrierConfig) {
+
+            if ($carrierCode == $jetShipmentMethod && strpos($currentShipmentMethod, $carrierCode) === 0) {
+
+                $carrierName = $store->getConfig("carriers/{$carrierCode}/name");
+                if (!empty($newHandlingName)) {
+                    $newHandlingName = $carrierName . ' (' . $newHandlingName . ')';
+                } else {
+                    $newHandlingName = $carrierName;
+                }
+
+
+                $store->setConfig("carriers/{$carrierCode}/handling_type", 'F'); #F - Fixed, P - Percentage
+                $store->setConfig("carriers/{$carrierCode}/handling_fee", $newHandlingFee);
+                $store->setConfig("carriers/{$carrierCode}/name", $newHandlingName);
+
+            }
+
+        }
+        $quote->getShippingAddress()->setCollectShippingRates(true);
+        //$quote->getShippingAddress()->collectShippingRates();
+    }
+
 
     /**
      * Save last mile options into the current quote
@@ -15,7 +49,6 @@ class JetVerzendt_Shipping_Model_Observer extends Mage_Core_Helper_Abstract
     {
         $lastmile     = array();
         $lastmileType = $observer->getEvent()->getRequest()->getParam('lastmile_type');
-
         $shipmentFee = 0;
         Mage::getSingleton('core/session')->setLastmileShipmentFee($shipmentFee); // reset fee
 

@@ -7,7 +7,7 @@ class JetVerzendt_Shipping_Block_Adminhtml_Sales_Order_Grid extends Mage_Adminht
 
         $this->getMassactionBlock()->addItem(
             'jetverzendt', array(
-                'label' => 'Verstuur orders naar Jet Verzendt',
+                'label' => 'Verstuur orders naar KeenDelivery',
                 'url'   => Mage::getModel('adminhtml/url')->getUrl(
                     'adminhtml/jetverzendt/overview'
                 )

@@ -74,10 +74,10 @@
         return false;
     }
 
-    function getParcelShopsData(zip_code, number, country) {
+    function getParcelShopsData(latitude, longitude) {
         new Ajax.Request('<?php echo Mage::getUrl('jetverzendt/parcelshop/data') ?>', {
             method: 'post',
-            parameters: {zip_code: zip_code, number: number, country: country},
+            parameters: {latitude: latitude, longitude: longitude},
             onSuccess: function (transport) {
                 result = transport.responseText.evalJSON();
                 for (var index = 0; index < result.length; ++index) {
@@ -97,29 +97,31 @@
     }
 
     function getZipCodeFromGeoCode(results) {
+        var result = '';
         for (i = 0; i < results.length; i++) {
             for (var j = 0; j < results[i].address_components.length; j++) {
                 for (var k = 0; k < results[i].address_components[j].types.length; k++) {
                     if (results[i].address_components[j].types[k] == "postal_code") {
-                        return results[i].address_components[j].short_name;
+                        result = results[i].address_components[j].short_name;
                     }
                 }
             }
         }
-        alert('Er kon geen postcode van dit adres worden gevonden');
+        return result;
     }
 
     function getNumberFromGeoCode(results) {
+        var result = 1;
         for (i = 0; i < results.length; i++) {
             for (var j = 0; j < results[i].address_components.length; j++) {
                 for (var k = 0; k < results[i].address_components[j].types.length; k++) {
                     if (results[i].address_components[j].types[k] == "street_number") {
-                        return results[i].address_components[j].short_name;
+                        result = results[i].address_components[j].short_name;
                     }
                 }
             }
         }
-        return 1;
+        return result;
     }
 
 
@@ -137,16 +139,17 @@
     }
 
     function getCoordinatesFromGeoCode(results) {
+        var country = 'NL';
         for (i = 0; i < results.length; i++) {
             for (var j = 0; j < results[i].address_components.length; j++) {
                 for (var k = 0; k < results[i].address_components[j].types.length; k++) {
                     if (results[i].address_components[j].types[k] == "country") {
-                        return results[i].address_components[j].short_name;
+                        country = results[i].address_components[j].short_name;
                     }
                 }
             }
         }
-        alert('Er konden geen coördinaten van dit adres gevonden worden');
+        return country;
     }
 
 
@@ -160,22 +163,20 @@
                 var longitude = results[0].geometry.location.lng();
 
                 geocoder.geocode({'address': latitude + "," + longitude}, function (results, status) {
-                    zip_code = getZipCodeFromGeoCode(results);
-                    number = getNumberFromGeoCode(results);
-                    country = getCountryFromGeoCode(results);
+                    //zip_code = getZipCodeFromGeoCode(results);
+                    //number = getNumberFromGeoCode(results);
+                    //country = getCountryFromGeoCode(results);
 
-                    getParcelShopsData(zip_code, number, country);
+                    getParcelShopsData(latitude, longitude);
 
                     map.setCenter(results[0].geometry.location);
                     var marker = new google.maps.Marker({
                         position: results[0].geometry.location
                     });
                 });
-            } else {
-                alert('Van deze locatie kon geen adres bepaald worden');
             }
         });
-        return;
+
     }
 
     $('jet_address').observe('keypress', function (event) {

@@ -21,16 +21,16 @@ class JetVerzendt_Shipping_DeliverdatesController extends Mage_Core_Controller_F
             $address = Mage::getModel('checkout/session')->getQuote()->getShippingAddress();
             if (isset($address)) {
                 $lastmilePriceDpdSaterday = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdSaterday();
-                $lastmileSaterdayDpdTime = Mage::helper('jetverzendt_shipping')->getLastmileSaterdayDpdTime();
+                $lastmileSaterdayDpdTime  = Mage::helper('jetverzendt_shipping')->getLastmileSaterdayDpdTime();
                 $block                    = $this->getLayout()->createBlock(
                     'Mage_Core_Block_Template',
                     'jet_verzendt_order_overview',
                     array('template' => 'jetverzendt/deliverdates/dpd_dates.phtml')
                 )->setData('lastmile_price_dpd_saterday', $lastmilePriceDpdSaterday)
                     ->setData('lastmile_saterday_dpd_time', $lastmileSaterdayDpdTime);
-                echo $block->toHtml();
+                $this->getResponse()->setBody($block->toHtml());
             }
-            exit;
+            return '';
         }
     }
 
@@ -53,9 +53,9 @@ class JetVerzendt_Shipping_DeliverdatesController extends Mage_Core_Controller_F
                     array('template' => 'jetverzendt/deliverdates/dhl_dates.phtml')
                 )->setData('deliver_dates', $parcelshopAddress)
                     ->setData('lastmile_price_dhl_evening', $lastmilePriceDhlEvening);
-                echo $block->toHtml();
+                $this->getResponse()->setBody($block->toHtml());
             }
-            exit;
+            return '';
         }
     }
 
