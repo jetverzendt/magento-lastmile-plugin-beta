@@ -4,7 +4,7 @@
 class JetVerzendt_Shipping_Model_System_Config_Source_Shippers
 {
     /**
-     * Show the Jet Verzendt Shippers
+     * Show the KeenDelivery Shippers
      *
      * @return array
      */

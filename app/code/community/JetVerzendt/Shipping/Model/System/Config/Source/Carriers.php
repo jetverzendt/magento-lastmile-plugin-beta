@@ -4,7 +4,7 @@
 class JetVerzendt_Shipping_Model_System_Config_Source_Carriers
 {
 	/**
-	 * Options getter for Jet Verzendt config page multiselect box
+	 * Options getter for KeenDelivery config page multiselect box
 	 *
 	 * @return array
 	 */

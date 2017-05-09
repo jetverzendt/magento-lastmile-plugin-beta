@@ -1,6 +1,6 @@
 <?php
 /**
- * Jet Verzendt
+ * KeenDelivery
  *
  * Plaats dit track.phtml bestand in de map email/order/shipment van uw frontend template folder van uw Magento installatie.
  */
@@ -24,7 +24,7 @@
             <?php foreach ($packages as $package) : ?>
                 <tr>
                     <td align="left" valign="top"
-                        style="padding:3px 9px"><?php echo $this->escapeHtml($package->getShipmentMethodName()) ?></td>
+                        style="padding:3px 9px"><?php echo $this->__('Print label') ?>:</td>
                     <td align="center" valign="top"
                         style="padding:3px 9px">
                         <a href="<?php echo $this->escapeUrl($package->getTrackTraceUrl()); ?>" target="_blank">

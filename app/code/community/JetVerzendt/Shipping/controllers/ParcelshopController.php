@@ -32,10 +32,9 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
                     'jet_verzendt_order_overview',
                     array('template' => 'jetverzendt/parcelshop/popup.phtml')
                 )->setData('address', $address);
-                echo $block->toHtml();
+                $this->getResponse()->setBody($block->toHtml());
             }
-
-            exit;
+            return '';
         }
     }
 
@@ -50,14 +49,15 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
 
             $result = array();
 
-            $zip_code = $this->getRequest()->getPost('zip_code');
-            $country  = $this->getRequest()->getPost('country');
-            $number   = $this->getRequest()->getPost('number');
+            //$zip_code = $this->getRequest()->getPost('zip_code');
+            //$country  = $this->getRequest()->getPost('country');
+            //$number   = $this->getRequest()->getPost('number');
+            $latitude  = $this->getRequest()->getPost('latitude');
+            $longitude = $this->getRequest()->getPost('longitude');
 
-            if (isset($zip_code) && !empty($zip_code) && isset($country) && !empty($country) && isset($number) && !empty($number)) {
-                $address['zip_code'] = $zip_code;
-                $address['country']  = $country;
-                $address['number']   = $number;
+            if (isset($latitude) && !empty($latitude) && isset($longitude) && !empty($longitude)) {
+                $address['latitude']  = $latitude;
+                $address['longitude'] = $longitude;
 
                 $parcelshops = Mage::helper('jetverzendt_shipping')->getParcelShops($address);
 
@@ -79,7 +79,6 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
                                     $marker = Mage::getDesign()->getSkinUrl('images/jetverzendt/marker_dhl.png', array('_secure' => true));
                                 } else {
                                     $marker = Mage::getDesign()->getSkinUrl('images/jetverzendt/marker_dpd.png', array('_secure' => true));
-
                                 }
                                 $result[] = array('lat' => $shop->latitude,
                                                   'lng' => $shop->longitude,
@@ -91,8 +90,7 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
                 }
             }
 
-            echo json_encode($result);
-            exit;
+            $this->getResponse()->setBody(Zend_Json::encode($result));
         }
     }
 
@@ -107,7 +105,9 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
         $lastmileType = $this->getRequest()->getParam('lastmile_type');
 
         $shipmentFee = 0;
+        $shipmentName = '';
         Mage::getSingleton('core/session')->setLastmileShipmentFee($shipmentFee); // reset fee
+        Mage::getSingleton('core/session')->setLastmileShipmentName(''); // reset fee name
 
         if (isset($lastmileType) && $lastmileType == 'dhl_deliverdate') {
             $lastmile['type']                    = $lastmileType;
@@ -121,6 +121,7 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
             }
 
             $lastmile['lastmile_fee'] = $shipmentFee;
+            $shipmentName          = 'Eigen bezorgmoment';
 
         } else if (isset($lastmileType) && $lastmileType == 'dpd_saterday') {
             $lastmile['type']                 = $lastmileType;
@@ -130,20 +131,23 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
             $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdSaterday();
 
             $lastmile['lastmile_fee'] = $shipmentFee;
+            $shipmentName       = 'Zaterdaglevering';
 
         } else if (isset($lastmileType) && $lastmileType == 'fadello') {
-            $lastmile['type'] = $lastmileType;
+            $lastmile['type']           = $lastmileType;
 
             $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceFadello();
 
             $lastmile['lastmile_fee'] = $shipmentFee;
+            $shipmentName = 'Same day delivery';
 
         } else if (isset($lastmileType) && $lastmileType == 'nextdaypremium') {
-            $lastmile['type'] = $lastmileType;
+            $lastmile['type']           = $lastmileType;
 
             $shipmentFee = Mage::helper('jetverzendt_shipping')->getLastmilePriceNextDayPremium();
 
             $lastmile['lastmile_fee'] = $shipmentFee;
+            $shipmentName = 'Next day premium';
 
         } else if (isset($lastmileType) && $lastmileType == 'parcelshop') {
             $lastmile['type']                            = $lastmileType;
@@ -158,6 +162,7 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
             }
 
             $lastmile['lastmile_fee'] = $shipmentFee;
+            $shipmentName                  = 'Bezorgen bij Parcelshop';
 
         }
         $result = array();
@@ -167,6 +172,7 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
                     ->setJetLastMile(serialize($lastmile))
                     ->save();
                 Mage::getSingleton('core/session')->setLastmileShipmentFee($shipmentFee);
+                Mage::getSingleton('core/session')->setLastmileShipmentName($shipmentName); // reset fee name
                 $result['error'] = false;
             } catch (Exception $e) {
                 Mage::logException($e);
@@ -178,6 +184,7 @@ class JetVerzendt_Shipping_ParcelshopController extends Mage_Core_Controller_Fro
                     ->setJetLastMile('')
                     ->save();
                 Mage::getSingleton('core/session')->setLastmileShipmentFee(0);
+                Mage::getSingleton('core/session')->setLastmileShipmentName($shipmentName);
                 $result['error'] = false;
             } catch (Exception $e) {
                 Mage::logException($e);

@@ -11,7 +11,7 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
      *
      * @param $observer
      */
-    public function salesShipmentGridCollectionLoadBefore($observer)
+    /*public function salesShipmentGridCollectionLoadBefore($observer)
     {
         $collection = $observer->getOrderShipmentGridCollection();
         $select     = $collection->getSelect();
@@ -33,7 +33,7 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
 
         $select->group('main_table.entity_id');
         //die((string)$select);
-    }
+    }*/
 
 
     /**
@@ -41,19 +41,19 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
      *
      * @param $observer
      */
-/*    public function salesOrderGridCollectionLoadBefore($observer)
-    {
-        $collection = $observer->getOrderGridCollection();
-        $collection->getSelect()->join(
-            array('orders' => $collection->getTable('sales/order')),
-            'main_table.entity_id = orders.entity_id',
-            array('jet_last_mile' => 'orders.jet_last_mile')
-        );
-    }*/
+    /*    public function salesOrderGridCollectionLoadBefore($observer)
+        {
+            $collection = $observer->getOrderGridCollection();
+            $collection->getSelect()->join(
+                array('orders' => $collection->getTable('sales/order')),
+                'main_table.entity_id = orders.entity_id',
+                array('jet_last_mile' => 'orders.jet_last_mile')
+            );
+        }*/
 
 
     /**
-     * Add Jet Verzendt shipment columns to the admin shipment grid
+     * Add KeenDelivery shipment columns to the admin shipment grid
      *
      * @param Varien_Event_Observer $observer
      *
@@ -62,59 +62,46 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
     public function appendCustomColumn(Varien_Event_Observer $observer)
     {
         $block = $observer->getBlock();
-        if ( ! isset($block)) {
+        if (!isset($block)) {
             return $this;
         }
-        if ($block->getType() == 'adminhtml/sales_shipment_grid') {
+        if ($block->getType() == 'adminhtml/sales_shipment_grid' || $block->getType() == 'adminhtml/sales_order_grid') {
 
             if (Mage::helper('jetverzendt_shipping')->isLastmileEnabled()) {
                 $block->addColumnAfter(
                     'jet_last_mile', array(
-                    'header'       => 'Last Mile',
-                    'type'         => 'jet_last_mile',
-                    'index'        => 'jet_last_mile',
-                    'width'        => '200px',
+                    'header' => 'Last Mile',
+                    'type' => 'jet_last_mile',
+                    'index' => 'jet_last_mile',
+                    'width' => '200px',
                     'string_limit' => '99999',
-                    'renderer'     => 'JetVerzendt_Shipping_Block_Adminhtml_Widget_Grid_Column_Renderer_Lastmile'
+                    'renderer' => 'JetVerzendt_Shipping_Block_Adminhtml_Widget_Grid_Column_Renderer_Lastmile'
                 ), 'shipping_name'
                 );
             }
 
             $block->addColumnAfter(
                 'label_printed', array(
-                'header'           => 'Labels geprint',
-                'type'             => 'options',
-                'width'            => '50px',
+                'header' => 'Labels geprint',
+                'type' => 'label_printed',
+                'index' => 'label_printed',
+                'width' => '50px',
                 'column_css_class' => 'jet_label_printed',
-                'index'            => 'label_printed',
-                'options'          => array('0' => 'Nee', '1' => 'Ja')
+                'string_limit' => '99999',
+                'renderer' => 'JetVerzendt_Shipping_Block_Adminhtml_Widget_Grid_Column_Renderer_Labelprinted'
             ), 'jet_last_mile'
             );
 
             $block->addColumnAfter(
                 'tracktrace', array(
-                'header'       => 'Track & trace',
-                'type'         => 'text',
-                'index'        => 'tracktrace',
-                'width'        => '115px',
-                'string_limit' => '99999'
+                'header' => 'Track & trace',
+                'type' => 'tracktrace',
+                'index' => 'tracktrace',
+                'width' => '115px',
+                'string_limit' => '99999',
+                'renderer' => 'JetVerzendt_Shipping_Block_Adminhtml_Widget_Grid_Column_Renderer_Tracktrace'
             ), 'label_printed'
             );
-        }
-
-        if ($block->getType() == 'adminhtml/sales_order_grid') {
-            if (Mage::helper('jetverzendt_shipping')->isLastmileEnabled()) {
-                $block->addColumnAfter(
-                    'jet_last_mile', array(
-                    'header'       => 'Last Mile',
-                    'type'         => 'jet_last_mile',
-                    'index'        => 'jet_last_mile',
-                    'width'        => '200px',
-                    'string_limit' => '99999',
-                    'renderer'     => 'JetVerzendt_Shipping_Block_Adminhtml_Widget_Grid_Column_Renderer_Lastmile'
-                ), 'shipping_name'
-                );
-            }
         }
     }
 
@@ -129,9 +116,9 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
             && $block->getRequest()->getControllerName() == 'sales_shipment'
         ) {
             $block->addItem(
-                'jetverzendt', array(
-                    'label' => 'Print Jet Verzendt labels',
-                    'url'   => Mage::getModel('adminhtml/url')->getUrl(
+                'jet_labels', array(
+                    'label' => 'Print KeenDelivery labels',
+                    'url' => Mage::getModel('adminhtml/url')->getUrl(
                         'adminhtml/jetverzendt/printlabels'
                     )
                 )
@@ -149,13 +136,22 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
             && $block->getRequest()->getControllerName() == 'sales_order'
         ) {
             $block->addItem(
-                'jetverzendt', array(
-                    'label' => 'Verstuur orders naar Jet Verzendt',
-                    'url'   => Mage::getModel('adminhtml/url')->getUrl(
+                'jet_send', array(
+                    'label' => 'Verstuur orders naar KeenDelivery',
+                    'url' => Mage::getModel('adminhtml/url')->getUrl(
                         'adminhtml/jetverzendt/overview'
                     )
                 )
             );
+
+           /* $block->addItem(
+                'jet_labels', array(
+                    'label' => 'Print KeenDelivery labels',
+                    'url' => Mage::getModel('adminhtml/url')->getUrl(
+                        'adminhtml/jetverzendt/printlabels'
+                    )
+                )
+            );*/
         }
     }
 

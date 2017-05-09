@@ -1,465 +1,777 @@
 <?php
-$defaultShipmentSetting = ( Mage::getStoreConfig( 'jetverzendt/default_shipment_form' ) );
-$orders                 = $this->getOrders();
-if ( count( $orders ) == 0 ) :
-	?>
-	<div>
-		<h3>Er zijn geen bestellingen om te versturen...</h3>
-	</div>
+$defaultShipmentSetting = Mage::getStoreConfig('jetverzendt/default_shipment_form');
+$orders = $this->getOrders();
+if (count($orders) == 0) :
+    ?>
+    <div>
+        <h3>Er zijn geen bestellingen om te versturen...</h3>
+    </div>
 <?php else : ?>
-	<div class="content-header">
-		<table cellspacing="0">
-			<tr>
-				<td style="width:50%;"><h3 class="icon-head head-sales-order">Weet u zeker dat u deze orders naar Jet
-						Verzendt wilt versturen?
-					</h3></td>
-				<td class="form-buttons">
-					<button title="Verstuur orders naar Jet Verzendt" type="button" onclick="jetStartSendOrders(); "
-					        id="jet_button_send_orders"
-					        class=""><span>Verstuur naar Jet Verzendt</span>
-					</button>
-				</td>
-			</tr>
-		</table>
-	</div>
+    <div class="content-header">
+        <table cellspacing="0">
+            <tr>
+                <td style="width:50%;"><h3 class="icon-head head-sales-order">Weet u zeker dat u deze orders naar
+                        KeenDelivery wilt versturen?
+                    </h3></td>
+                <td class="form-buttons">
+                    <button title="Verstuur orders naar KeenDelivery" type="button" onclick="jetStartSendOrders(); "
+                            id="keen_button_send_orders"
+                            class=""><span>Verstuur naar KeenDelivery</span>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-	<div>
-		<div class="grid">
-			<table class="data" cellspacing="0">
-				<thead>
-				<tr class="headings">
-					<th class=" last"><span class="sort-title">Order #</span>
-					</th>
-					<th class=" last"><span class="sort-title">Naam</span>
-					</th>
-					<th class=" last"><span class="sort-title">Adres</span>
-					</th>
-					<th class=" last"><span class="sort-title">Plaats</span>
-					</th>
-					<th class=" last"><span class="sort-title">Aantal items</span>
-					</th>
-					<th class=" last"><span class="sort-title">Lastmile</span>
-					</th>
-					<th class=" last" style="width: 500px"><span class="sort-title">Verzendspecificaties</span>
-					</th>
-					<th class="" style="width: 300px"><span class="sort-title">Jet Verzendt status</span>
-					</th>
-				</tr>
-				</thead>
-				<tbody>
-				<?php
-				if ( $orders ) :
-					$i = 0;
-					foreach ( $orders as $order ) :
-						?>
-						<tr class="<?php echo ( $i % 2 ) ? 'even' : 'odd' ?> " title=""
-						    id="jet_order_<?php echo $this->escapeHtml( $order->getEntityId() ); ?>">
-							<td>
-								<?php echo $this->escapeHtml( $order->getIncrementId() ); ?>
-								<input type="hidden" class="order_ids" id="order_id_<?php echo $i ?>"
-								       value="<?php echo $order->getEntityId(); ?>"/>
-								<input type="hidden" id="order_increment_<?php echo $order->getEntityId(); ?>"
-								       value="<?php echo $order->getIncrementId(); ?>"/>
-								<input type="hidden" id="order_send_status_<?php echo $order->getEntityId(); ?>"
-								       value="0"/>
+    <div>
+        <div class="grid">
+            <table class="data" cellspacing="0">
+                <thead>
+                <tr class="headings">
+                    <th class=" last"><span class="sort-title">Order #</span>
+                    </th>
+                    <th class=" last"><span class="sort-title">Naam</span>
+                    </th>
+                    <th class=" last"><span class="sort-title">Adres</span>
+                    </th>
+                    <th class=" last"><span class="sort-title">Plaats</span>
+                    </th>
+                    <th class=" last"><span class="sort-title">Land</span>
+                    </th>
+                    <th class=" last"><span class="sort-title">Aantal items</span>
+                    </th>
+                    <th class=" last"><span class="sort-title">Lastmile</span>
+                    </th>
+                    <th class=" last" style="width: 500px"><span class="sort-title">Verzendspecificaties</span>
+                    </th>
+                    <th class="" style="width: 300px"><span class="sort-title">KeenDelivery status</span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                if ($orders) :
+                    $i = 0;
+                    foreach ($orders as $order) :
+                        ?>
+                        <tr class="<?php echo ($i % 2) ? 'even' : 'odd' ?> " title=""
+                            id="keen_order_<?php echo $this->escapeHtml($order->getEntityId()); ?>">
+                            <td>
+                                <?php echo $this->escapeHtml($order->getIncrementId()); ?>
+                                <input type="hidden" class="order_ids" id="order_id_<?php echo $i ?>"
+                                       value="<?php echo $order->getEntityId(); ?>"/>
+                                <input type="hidden" id="order_increment_<?php echo $order->getEntityId(); ?>"
+                                       value="<?php echo $order->getIncrementId(); ?>"/>
+                                <input type="hidden" id="order_send_status_<?php echo $order->getEntityId(); ?>"
+                                       value="0"/>
 
-							</td>
-							<td>
-								<?php echo $this->escapeHtml(
-									$order->getShippingAddress()->getFirstname() . ' ' . $order->getShippingAddress()->getMiddlename()
-									. ' '
-									. $order->getShippingAddress()->getLastname()
-								); ?>
+                            </td>
+                            <td>
+                                <?php echo $this->escapeHtml(
+                                    $order->getShippingAddress()->getFirstname() . ' ' . $order->getShippingAddress()->getMiddlename()
+                                    . ' '
+                                    . $order->getShippingAddress()->getLastname()
+                                ); ?>
 
-							</td>
-							<td>
-								<?php echo $this->escapeHtml( $order->getShippingAddress()->getData( 'street' ) ); ?>
-							</td>
-							<td>
-								<?php echo $this->escapeHtml( $order->getShippingAddress()->getCity() ); ?>
-							</td>
-							<td>
-								<div class="jet_tooltip">
-									<?php echo $this->escapeHtml( $order->getTotalItemCount() ); ?>
-									<span class="jet_tooltiptext"><?php $items = $order->getAllVisibleItems();
-										foreach ( $items as $item ):
-											echo ( $item->getQtyOrdered() * 1 ) . ' x ' . $item->getName() . '<br/>';
-										endforeach;
-										?></span>
-								</div>
-							</td>
-							<td>
-								<?php
+                            </td>
+                            <td>
+                                <?php echo $this->escapeHtml($order->getShippingAddress()->getData('street')); ?>
+                            </td>
+                            <td>
+                                <?php echo $this->escapeHtml($order->getShippingAddress()->getCity()); ?>
+                            </td>
+                            <td>
+                                <?php echo $this->escapeHtml($order->getShippingAddress()->getCountry()); ?>
+                            </td>
+                            <td>
+                                <div class="keen_tooltip">
+                                    <?php echo $this->escapeHtml($order->getTotalItemCount()); ?>
+                                    <span class="keen_tooltiptext"><?php $items = $order->getAllVisibleItems();
+                                        foreach ($items as $item):
+                                            echo ($item->getQtyOrdered() * 1) . ' x ' . $item->getName() . '<br/>';
+                                        endforeach;
+                                        ?></span>
+                                </div>
+                            </td>
+                            <td>
+                                <?php
                                 $jetLastmileComment = '';
                                 $jetShipmentSetting = '';
-								if ( $order->getJetLastMile() ) {
-									$jetDefaultOrder = 0;
+                                if ($order->getJetLastMile()) {
+                                    $jetDefaultOrder = 0;
 
-									$lastMileData = unserialize( $order->getJetLastMile() );
+                                    $lastMileData = unserialize($order->getJetLastMile());
 
-									if ( isset( $lastMileData['type'] )
-									     && $lastMileData['type'] == 'dhl_deliverdate'
-									     && isset( $lastMileData['lastmile_service'] )
-									     && isset( $lastMileData['lastmile_deliverdate'] )
-									     && isset( $lastMileData['lastmile_deliverperiod'] )
-									     && isset( $lastMileData['lastmile_deliverevening'] )
-									) {
-										$jetShipmentSetting = 'product=' . $lastMileData['lastmile_service'] . '&service=DHL_FOR_YOU' . ( ( $lastMileData['lastmile_deliverevening'] == 1 ) ? '&evening=1' : '' );
-										$jetLastmileComment = '<strong>Tijdsvaklevering op: ' . $this->escapeHtml( $lastMileData['lastmile_deliverdate'] ) . '</strong>';
-										$jetLastmileComment .= '<br/>' . ( ( $lastMileData['lastmile_deliverevening'] == 1 ) ? 'Avondlevering.' : '' );
+                                    if (isset($lastMileData['type'])
+                                        && $lastMileData['type'] == 'dhl_deliverdate'
+                                        && isset($lastMileData['lastmile_service'])
+                                        && isset($lastMileData['lastmile_deliverdate'])
+                                        && isset($lastMileData['lastmile_deliverperiod'])
+                                        && isset($lastMileData['lastmile_deliverevening'])
+                                    ) {
+                                        $jetShipmentSetting = 'product=' . $lastMileData['lastmile_service'] . '&service=DHL_FOR_YOU' . (($lastMileData['lastmile_deliverevening'] == 1) ? '&evening=1' : '');
+                                        $jetLastmileComment = '<strong>Tijdsvaklevering op: ' . $this->escapeHtml($lastMileData['lastmile_deliverdate']) . '</strong>';
+                                        $jetLastmileComment .= '<br/>' . (($lastMileData['lastmile_deliverevening'] == 1) ? 'Avondlevering.' : '');
 
-									}
+                                    }
 
-									if ( isset( $lastMileData['type'] )
-									     && $lastMileData['type'] == 'dpd_saterday'
-									) {
-										$jetLastmileComment = '<strong>DPD zaterdaglevering op: ' . $this->escapeHtml( date( 'd-m-Y', strtotime( $lastMileData['lastmile_deliverdate'] ) ) ) . '</strong>';
-										$jetShipmentSetting = 'product=DPD&service=CL&saturday_delivery=1';
-									}
+                                    if (isset($lastMileData['type'])
+                                        && $lastMileData['type'] == 'dpd_saterday'
+                                    ) {
+                                        $jetLastmileComment = '<strong>DPD zaterdaglevering op: ' . $this->escapeHtml(date('d-m-Y', strtotime($lastMileData['lastmile_deliverdate']))) . '</strong>';
+                                        $jetShipmentSetting = 'product=DPD&service=CL&saturday_delivery=1';
+                                    }
 
-									if ( isset( $lastMileData['type'] )
-									     && $lastMileData['type'] == 'fadello'
-									) {
-										$jetLastmileComment = '<strong>Same Day Delivery</strong>';
-										$jetShipmentSetting = 'product=Fadello&service=DEFAULT';
-									}
+                                    if (isset($lastMileData['type'])
+                                        && $lastMileData['type'] == 'fadello'
+                                    ) {
+                                        $jetLastmileComment = '<strong>Same Day Delivery</strong>';
+                                        $jetShipmentSetting = 'product=Fadello&service=DEFAULT';
+                                    }
 
 
-                                    if ( isset( $lastMileData['type'] )
+                                    if (isset($lastMileData['type'])
                                         && $lastMileData['type'] == 'nextdaypremium'
                                     ) {
-                                        $jetLastmileComment = '<strong>Next Day Delivery</strong>';
+                                        $jetLastmileComment = '<strong>Next Day Premium</strong>';
                                         $jetShipmentSetting = 'product=NextDayPremium&service=DEFAULT';
                                     }
 
 
+                                    if (isset($lastMileData['type'])
+                                        && $lastMileData['type'] == 'parcelshop'
+                                        && isset($lastMileData['lastmile_service'])
+                                        && isset($lastMileData['lastmile_parcelshop_id'])
+                                    ) {
+                                        if ($lastMileData['lastmile_service'] == 'DPD') {
+                                            $jetShipmentSetting = 'product=DPD&service=PARCELSHOP&parcel_shop_id=' . $lastMileData['lastmile_parcelshop_id'];
+                                        } else {
+                                            $jetShipmentSetting = 'product=' . $lastMileData['lastmile_service'] . '&service=PARCEL_SHOP&parcel_shop_id=' . $lastMileData['lastmile_parcelshop_id'];
 
-                                    if ( isset( $lastMileData['type'] )
-									     && $lastMileData['type'] == 'parcelshop'
-									     && isset( $lastMileData['lastmile_service'] )
-									     && isset( $lastMileData['lastmile_parcelshop_id'] )
-									) {
-										if ( $lastMileData['lastmile_service'] == 'DPD' ) {
-											$jetShipmentSetting = 'product=DPD&service=PARCELSHOP&parcel_shop_id=' . $lastMileData['lastmile_parcelshop_id'];
-										} else {
-											$jetShipmentSetting = 'product=' . $lastMileData['lastmile_service'] . '&service=PARCEL_SHOP&parcel_shop_id=' . $lastMileData['lastmile_parcelshop_id'];
+                                        }
+                                        $jetLastmileComment = '<strong>Parcelshop: ' . $this->escapeHtml($lastMileData['lastmile_parcelshop_id']) . '</strong>';
+                                        $jetLastmileComment .= '<br/>' . $this->escapeHtml($lastMileData['lastmile_parcelshop_description']);
+                                    }
 
-										}
-										$jetLastmileComment = '<strong>Parcelshop: ' . $this->escapeHtml( $lastMileData['lastmile_parcelshop_id'] ) . '</strong>';
-										$jetLastmileComment .= '<br/>' . $this->escapeHtml( $lastMileData['lastmile_parcelshop_description'] );
-									}
+                                } else {
 
-								} else {
-
-									$jetShipmentSetting = isset( $defaultShipmentSetting ) ? $this->escapeHtml( $defaultShipmentSetting ) : '';
-									$jetDefaultOrder    = 1;
-									$jetLastmileComment = '';
-
-
-								}
-
-								echo $jetLastmileComment;
-
-								?>
-							</td>
-							<td class="last" id="jet_deliver_<?php echo $order->getEntityId(); ?>">
-								<input type="hidden"
-								       id="jet_default_order_<?php echo $order->getEntityId(); ?>"
-								       value="<?php echo $this->escapeHtml( $jetDefaultOrder ); ?>"/>
-
-								<input type="hidden"
-								       id="jet_shipment_setting_<?php echo $order->getEntityId(); ?>"
-								       value="<?php echo $this->escapeHtml( $jetShipmentSetting ); ?>"/>
-
-								<span id="jet_order_text_<?php echo $order->getEntityId(); ?>"></span>
-								<a href="javascript:void(0);"
-								   onclick="jetSetupOrderSetting(<?php echo $order->getEntityId(); ?>); $('jet_lightbox').show(); return false;">Bekijk/wijzig</a>
-							</td>
-							<td class="jet_order_status"
-							    id="jet_order_status_<?php echo $order->getEntityId(); ?>"></td>
-						</tr>
-						<?php
-						$i ++;
-					endforeach;
-				endif; ?>
-				</tbody>
-			</table>
-		</div>
-	</div>
-
-	<div class="jet_lightbox" id="jet_lightbox" style="display: none">
-		<div class="jet_lightbox_close" onclick="jetCloseLightbox();"><span>x</span></div>
-		<div>
-			<form id="jetverzendt_shipment_form" action="<?php echo Mage::getModel( 'adminhtml/url' )->getUrl(
-				'adminhtml/jetverzendt/sendorders'
-			); ?>">
-				<h3>Verzendinstellingen:</h3>
-				<div class="jetverzendt_shipment_form_message"></div>
-				<?php
-				$block = $this->getLayout()->createBlock( 'core/template' );
-				echo $block->setTemplate( 'jetverzendt/sales/order/shipment/create/jetverzendt_shipment.phtml' )->toHtml();
-				?>
-			</form>
-
-		</div>
-	</div>
-	<script type="text/javascript">
-		var jet_shippable_orders = new Array;
-		var jet_send_status = 0;
-		var jet_errors = 0;
-
-		//<![CDATA[
-		document.observe("dom:loaded", function () {
-			setTimeout(function () {
-				setJetShipmentAndOrderFields();
-				jetUpdateTextMessage();
-			}, 500);
-
-		});
+                                    $jetShipmentSetting = isset($defaultShipmentSetting) ? $this->escapeHtml($defaultShipmentSetting) : '';
+                                    $jetDefaultOrder = 1;
+                                    $jetLastmileComment = '';
 
 
-		editForm = new varienForm('edit_form');
+                                }
 
-		function jetSaveShipmentSettingsBox() {
-			// Save form values to hidden field
-			if ($('jet_entity_id') != undefined) {
-				var id = $('jet_entity_id').getValue();
-				if (id) {
-					var inputs = $("jetverzendt_shipment_form").getElements();
-					var visibleInputs = inputs.grep({
-						match: function (elem) {
-							if (elem.readAttribute('name') == 'default_order' || elem.readAttribute('name') == 'entity_id' || elem.readAttribute('name') == 'increment_id') return false;
-							return true;
-						}
-					});
-					var serialized = Form.serializeElements(visibleInputs);
-					if (serialized) {
-						if ($('jet_shipment_setting_' + id) != undefined) {
-							$('jet_shipment_setting_' + id).setValue(serialized);
-						}
+                                echo $jetLastmileComment;
 
-						// check if to copy this values to other default fields
-						var set_as_default = $('jet_set_as_default').checked;
-						if (set_as_default) {
+                                ?>
+                            </td>
+                            <td class="last" id="keen_deliver_<?php echo $order->getEntityId(); ?>">
+                                <input type="hidden"
+                                       id="keen_default_order_<?php echo $order->getEntityId(); ?>"
+                                       value="<?php echo $this->escapeHtml($jetDefaultOrder); ?>"/>
 
-							$$(".order_ids").each(
-								function (item) {
-									if (($('jet_default_order_' + item.getValue()) != undefined)) {
-										if ($('jet_default_order_' + item.getValue()).getValue() == 1) {
-											if ($('jet_shipment_setting_' + item.getValue()) != undefined) {
-												$('jet_shipment_setting_' + item.getValue()).setValue(serialized);
-											}
-										}
-									}
-								}
-							)
-						}
-					}
-				}
-			}
-			jetUpdateTextMessage();
-			$('jet_lightbox').hide();
+                                <input type="hidden"
+                                       id="keen_shipment_setting_<?php echo $order->getEntityId(); ?>"
+                                       value="<?php echo $this->escapeHtml($jetShipmentSetting); ?>"/>
 
-		}
+                                <span id="keen_order_text_<?php echo $order->getEntityId(); ?>"></span>
+                                <a href="javascript:void(0);"
+                                   onclick="jetSetupOrderSetting(<?php echo $order->getEntityId(); ?>); $('keen_lightbox').show(); return false;">Bekijk/wijzig</a>
+                            </td>
+                            <td class="keen_order_status"
+                                id="keen_order_status_<?php echo $order->getEntityId(); ?>"></td>
+                        </tr>
+                        <?php
+                        $i++;
+                    endforeach;
+                endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
+    <div class="keen_lightbox" id="keen_lightbox" style="display: none">
+        <div class="keen_lightbox_close" onclick="jetCloseLightbox();"><span>x</span></div>
+        <div>
+            <form id="jetverzendt_shipment_form" action="<?php echo Mage::getModel('adminhtml/url')->getUrl(
+                'adminhtml/jetverzendt/sendorders'
+            ); ?>">
+                <h3>Verzendinstellingen:</h3>
+                <div class="jetverzendt_shipment_form_message"></div>
+                <?php
+                $block = $this->getLayout()->createBlock('core/template');
+                echo $block->setTemplate('jetverzendt/sales/order/shipment/create/jetverzendt_shipment.phtml')->toHtml();
+                ?>
+            </form>
 
-		function jetSetupOrderSetting(id) {
+        </div>
+    </div>
+    <script type="text/javascript">
+        var keen_shippable_orders = new Array;
+        var keen_send_status = 0;
+        var keen_errors = 0;
 
-			$('jetverzendt_shipment_form').reset();
+        //<![CDATA[
+        document.observe("dom:loaded", function () {
+            setTimeout(function () {
+                generateShipmentForm();
+                jetUpdateTextMessage();
+            }, 500);
 
-			// Set entity ID
-			$('jet_entity_id').setValue(id);
-
-			// Set increment ID
-			if ($('order_increment_' + id) != undefined) {
-				$('jet_increment_id').setValue($('order_increment_' + id).getValue());
-			} else {
-				alert('Er is iets fout gegaan (1)');
-			}
-
-			// Set form values
-			if ($('jet_shipment_setting_' + id) != undefined) {
-				var value = $('jet_shipment_setting_' + id).getValue();
-
-				var arrayOfStrings = value.split('&');
-				for (i = 0; i < arrayOfStrings.length; i++) {
-					value = arrayOfStrings[i];
-					arrValue = value.split('=');
-					if ($('jet_' + arrValue[0]) != undefined && arrValue[0] != 'entity_id' && arrValue[0] != 'increment_id') {
-						$('jet_' + arrValue[0]).setValue(arrValue[1]);
-					}
-				}
-
-				// Jet Amount default 1
-				if (!$('jet_amount').getValue()) {
-					$('jet_amount').setValue(1)
-				}
-
-				// Jet Amount
-				if (!$('jet_weight').getValue()) {
-					$('jet_weight').setValue(1)
-				}
+        });
 
 
-				if ($('jet_default_order_' + id) != undefined && $('jet_default_order_' + id).getValue() == 1) {
-					$('jet_default_order').setValue(1);
-					$('jet_option_default_method').show();
-				} else {
-					$('jet_default_order').setValue(0);
-					$('jet_option_default_method').hide();
-				}
+        var shipping_methods = '<?php echo Mage::helper('jetverzendt_shipping')->getShippingMethodsInJson() ?>'.evalJSON();
+
+        function generateShipmentForm() {
+            var form = '';
+
+            form += generateProductDropdown();
+
+            form += generateServiceField();
+
+            form += generateAmounField();
+
+            form += generateReferenceField();
+
+            form += generateServiceOptions();
+
+            $('shipment_form').update(form);
+
+            setKeenServices();
+
+            setKeenServiceOptions();
+
+        }
+
+        function generateProductDropdown() {
+            result = '<div class="form-group">';
+
+            result += '<div class="label">Vervoerder</div>';
+
+            result += '<select id="keen_product" name="product" onchange="setKeenServices(); setKeenServiceOptions();">';
+
+            if (Object.keys(shipping_methods).length > 0) {
+                for (var k in shipping_methods) {
+                    if (typeof shipping_methods[k] !== 'function') {
+                        result += '<option value="' + shipping_methods[k]['value'] + '">' + shipping_methods[k]['text'] + '</option>';
+                        //console.log(shipping_methods[k]);
+
+                    }
+                }
+            }
+
+            result += '</select>';
+            result += '</div>';
+
+            return result;
+
+        }
+
+        function generateAmounField() {
+            result = '<div class="form-group">';
+            result += '<div class="label">Aantal pakketten</div>';
+            result += '<input type="text" name="amount" id="keen_amount" />';
+            result += '</div>';
+
+            return result;
+        }
+
+        function generateReferenceField() {
+            result = '<div class="form-group">';
+            result += '<div class="label">Referentie</div>';
+            result += '<input type="text" name="reference" id="keen_reference" />';
+            result += '</div>';
+
+            return result;
+        }
+
+        function generateServiceField() {
+            result = '<div class="form-group">';
+            result += '<div class="label">Service</div>';
+            result += '<select id="keen_service" name="service" onchange="setKeenServiceOptions()">';
+            result += '</select>';
+            result += '</div>';
+
+            return result;
+        }
 
 
-				setJetShipmentAndOrderFields();
-			} else {
-				alert('Er is iets fout gegaan (2)');
-			}
-		}
+        function generateServiceOptions() {
+            result = '<div id="keen_service_options"></div>';
+            return result;
+        }
+
+        function setKeenServices() {
+            var current_product = $('keen_product').getValue();
+            result = '';
+
+            if (Object.keys(shipping_methods).length > 0) {
+                for (var k in shipping_methods) {
+                    if (typeof shipping_methods[k] !== 'function') {
+                        if (shipping_methods[k].value == current_product) {
+                            if (Object.keys(shipping_methods[k]['services']).length > 0) {
+                                for (var i in shipping_methods[k]['services']) {
+                                    if (typeof shipping_methods[k]['services'][i] !== 'function') {
+                                        result += '<option value="' + shipping_methods[k]['services'][i]['value'] + '">' + shipping_methods[k]['services'][i]['text'] + '</option>';
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            $('keen_service').update('');
+            $('keen_service').update(result);
 
 
-		function jetGetFormValueByName(id, name) {
-			if ($('jet_shipment_setting_' + id) != undefined) {
-				var value = $('jet_shipment_setting_' + id).getValue();
+        }
 
-				var arrayOfStrings = value.split('&');
-				for (i = 0; i < arrayOfStrings.length; i++) {
-					value = arrayOfStrings[i];
-					arrValue = value.split('=');
-					if (arrValue[0] == name) {
-						return arrValue[1];
-					}
-				}
+        function setKeenServiceOptions() {
+            var current_product = $('keen_product').getValue();
+            var keen_service = $('keen_service').getValue();
 
-			}
-			return '';
-		}
+            result = '';
 
-		function jetCloseLightbox() {
-			$$(".jet_lightbox").each(
-				function (item) {
-					item.hide();
-				}
-			);
-		}
+            if (Object.keys(shipping_methods).length > 0) {
+                for (var k in shipping_methods) {
+                    if (typeof shipping_methods[k] !== 'function') {
+                        if (shipping_methods[k].value == current_product) {
 
-		function jetUpdateTextMessage() {
-			$$(".order_ids").each(
-				function (item) {
-					var order_text = '';
-					if (($('jet_shipment_setting_' + item.getValue()) != undefined)) {
-						order_text += jetGetFormValueByName(item.getValue(), 'product');
-						order_text += ' / ';
-						order_text += jetGetFormValueByName(item.getValue(), 'service');
-						$('jet_order_text_' + item.getValue()).update(order_text);
-					}
-				}
-			)
-		}
+                            if (Object.keys(shipping_methods[k]['services']).length > 0) {
+                                for (var i in shipping_methods[k]['services']) {
+                                    if (shipping_methods[k]['services'][i].value == keen_service) {
 
-		function jetCheckForm() {
-			var status = true;
-			$$(".jet_shipment_error").each(
-				function (item) {
-					item.removeClassName('jet_shipment_error');
-				}
-			);
+                                        if (Object.keys(shipping_methods[k]['services'][i]['options']).length > 0) {
+                                            for (var j in shipping_methods[k]['services'][i]['options']) {
+
+                                                if (typeof shipping_methods[k]['services'][i]['options'] !== 'function') {
+                                                    type = shipping_methods[k]['services'][i]['options'][j]['type'];
+
+                                                    if (type != null) {
+
+                                                        if (type != 'hidden') {
+                                                            result += '<div class="form-group">';
+                                                            result += '<div class="label">' + shipping_methods[k]['services'][i]['options'][j]['text'] + '</div>';
+
+                                                        }
 
 
-			$$(".order_ids").each(
-				function (item) {
-					if (($('jet_shipment_setting_' + item.getValue()) != undefined)) {
-						if (!$('jet_shipment_setting_' + item.getValue()).getValue()) {
-							$('jet_order_' + item.getValue()).addClassName('jet_shipment_error');
-							status = false;
-						}
-					} else {
-						status = false;
+                                                        if (type == 'selectbox') {
+                                                            result += '<select ';
+                                                            if (shipping_methods[k]['services'][i]['options'][j]['mandatory'] == 1) {
+                                                                result += ' required ';
+                                                            }
+                                                            result += ' name="' + shipping_methods[k]['services'][i]['options'][j]['field'] + '" id="keen_' + shipping_methods[k]['services'][i]['options'][j]['field'] + '">';
 
-					}
-				}
-			)
-			return status;
-		}
+                                                            if (shipping_methods[k]['services'][i]['options'][j]['mandatory'] == 0) {
+                                                                result += '<option value="">Kies evt. een optie</option>';
+                                                            }
 
-		function jetStartSendOrders() {
-			jet_shippable_orders = [];
-			jet_send_status = 0;
-			jet_errors = 0;
-			var i = 0;
-
-			if (jetCheckForm()) {
-				//saveDefaultShipmentForm();
-
-				$$(".order_ids").each(
-					function (item) {
-						if (($('order_send_status_' + item.getValue()) != undefined)) {
-							if ($('order_send_status_' + item.getValue()).getValue() == 0) {
-								jet_shippable_orders[i++] = item.getValue();
-							}
-						}
-					});
-
-				if (jet_shippable_orders.length > 0) {
-					$('jet_button_send_orders').addClassName('disabled');
-					$('jet_button_send_orders').disable();
-					jetSendOrderToJet(0);
-				} else {
-					alert('Er zijn geen orders om te versturen');
-				}
-
-			}
-			else {
-				alert('Enkele orders zijn niet volledig ingevuld. Wijzig dit om door te gaan.');
-			}
-		}
+                                                            if (Object.keys(shipping_methods[k]['services'][i]['options'][j]['choices']).length > 0) {
+                                                                for (var l in shipping_methods[k]['services'][i]['options'][j]['choices']) {
+                                                                    if (typeof shipping_methods[k]['services'][i]['options'][j]['choices'] !== 'function') {
+                                                                        result += '<option value="' + shipping_methods[k]['services'][i]['options'][j]['choices'][l]['value'] + '">' + shipping_methods[k]['services'][i]['options'][j]['choices'][l]['text'] + '</option>';
+                                                                    }
+                                                                }
+                                                            }
+                                                            result += '</select>';
+                                                        }
 
 
-		function jetSendOrderToJet(i) {
-			var order_id = jet_shippable_orders[i];
+                                                        if (type == 'radio') {
 
-			jetSetupOrderSetting(order_id);
-			$('jet_order_status_' + order_id).update('Bezig met versturen');
+                                                            if (Object.keys(shipping_methods[k]['services'][i]['options'][j]['choices']).length > 0) {
+                                                                for (var l in shipping_methods[k]['services'][i]['options'][j]['choices']) {
+                                                                    if (typeof shipping_methods[k]['services'][i]['options'][j]['choices'] !== 'function') {
+                                                                        result += '<label><input type="radio" ';
+                                                                        result += ' name="' + shipping_methods[k]['services'][i]['options'][j]['field'] + '" ';
+                                                                        if (shipping_methods[k]['services'][i]['options'][j]['mandatory'] == 1) {
+                                                                            result += ' required ';
+                                                                        }
+                                                                        result += ' value="' + shipping_methods[k]['services'][i]['options'][j]['choices'][l]['value'] + '" />' + shipping_methods[k]['services'][i]['options'][j]['choices'][l]['text'] + '</label>';
+                                                                    }
+                                                                }
+                                                            }
 
-			$('jetverzendt_shipment_form').request({
-				onComplete: function (t) {
-					if (t.responseText == 1) {
-						$('order_send_status_' + order_id).setValue(1);
-						$('jet_order_status_' + order_id).update('<span class="jet_green">Order verzonden</span>');
-					} else if (t.responseText == 2) {
-						$('order_send_status_' + order_id).setValue(1);
-						$('jet_order_status_' + order_id).update('<span class="jet_green">Order verzonden, geen verzending aangemaakt</span>');
-					} else {
-						jet_errors++;
-						$('jet_order_status_' + order_id).update('<span class="jet_red">' + t.responseText + '</span>');
-					}
-					jet_send_status++;
-
-					// when ready...
-					if (jet_send_status == jet_shippable_orders.length) {
-						if (jet_errors > 0) {
-							if (jet_errors == 1) {
-								alert('Het verzenden is afgerond. Er is ' + jet_errors + ' order mislukt.');
-							} else {
-								alert('Het verzenden is afgerond. Er zijn ' + jet_errors + ' orders mislukt.');
-							}
-						} else {
-							alert('Verzenden is succesvol afgerond.');
-						}
-
-						$('jet_button_send_orders').removeClassName('disabled');
-						$('jet_button_send_orders').enable();
-					} else {
-						i++;
-						jetSendOrderToJet(i);
-					}
-
-				}
-			});
+                                                        }
 
 
-		}
+                                                        if (type == 'checkbox') {
+
+                                                            result += '<input type="checkbox" ';
+                                                            if (shipping_methods[k]['services'][i]['options'][j]['mandatory'] == 1) {
+                                                                result += ' required ';
+                                                            }
+
+                                                            result += ' name="' + (shipping_methods[k]['services'][i]['options'][j]['field']) + '" id="keen_' + shipping_methods[k]['services'][i]['options'][j]['field'] + '" />';
+
+                                                        }
 
 
-		//]]>
-	</script>
+                                                        if (type == 'textbox' || type == 'date' || type == 'email' || type == 'hidden') {
+
+                                                            result += '<input ';
+
+                                                            if (type == 'textbox') {
+                                                                result += ' type="text" ';
+                                                            } else if (type == 'email') {
+                                                                result += ' type="email" ';
+                                                            } else if (type == 'hidden') {
+                                                                result += ' type="hidden" value="' + shipping_methods[k]['services'][i]['options'][j]['choices']['value'] + '" ';
+                                                            } else if (type == 'date') {
+                                                                result += ' type="date" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" ';
+
+
+                                                            }
+
+
+                                                            if (shipping_methods[k]['services'][i]['options'][j]['mandatory'] == 1) {
+                                                                result += ' required ';
+                                                            }
+
+                                                            result += ' name="' + (shipping_methods[k]['services'][i]['options'][j]['field']) + '" id="keen_' + shipping_methods[k]['services'][i]['options'][j]['field'] + '" />';
+
+                                                        }
+
+                                                        if (type != 'hidden') {
+                                                            result += '</div>';
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $('keen_service_options').update('');
+            $('keen_service_options').update(result);
+
+            $$("#jetverzendt_shipment_form input[type=date]").each(
+                function (item) {
+
+                    if (item.identify()) {
+                        Calendar.setup({
+                            inputField: 'keen_pickup_date',
+                            ifFormat: "%Y-%m-%d",
+                            showsTime: false,
+                            button: "date_select_trig",
+                            align: "Bl",
+                            singleClick: true
+                        });
+
+                    }
+                }
+            );
+        }
+
+
+        editForm = new varienForm('edit_form');
+
+        function jetSaveShipmentSettingsBox() {
+            // Save form values to hidden field
+            if ($('keen_entity_id') != undefined) {
+                var id = $('keen_entity_id').getValue();
+                if (id) {
+                    var inputs = $("jetverzendt_shipment_form").getElements();
+                    var visibleInputs = inputs.grep({
+                        match: function (elem) {
+                            if (elem.readAttribute('name') == 'default_order' || elem.readAttribute('name') == 'entity_id' || elem.readAttribute('name') == 'increment_id') return false;
+                            return true;
+                        }
+                    });
+                    var serialized = Form.serializeElements(visibleInputs);
+                    if (serialized) {
+                        if ($('keen_shipment_setting_' + id) != undefined) {
+                            $('keen_shipment_setting_' + id).setValue(serialized);
+                        }
+
+                        // check if to copy this values to other default fields
+                        var set_as_default = $('keen_set_as_default').checked;
+                        if (set_as_default) {
+
+                            $$(".order_ids").each(
+                                function (item) {
+                                    if (($('keen_default_order_' + item.getValue()) != undefined)) {
+                                        if ($('keen_default_order_' + item.getValue()).getValue() == 1) {
+                                            if ($('keen_shipment_setting_' + item.getValue()) != undefined) {
+                                                $('keen_shipment_setting_' + item.getValue()).setValue(serialized);
+                                            }
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            jetUpdateTextMessage();
+            $('keen_lightbox').hide();
+
+        }
+
+
+        function jetSetupOrderSetting(id) {
+
+
+            $('jetverzendt_shipment_form').reset();
+
+            // Set entity ID
+            $('keen_entity_id').setValue(id);
+
+            // Set increment ID
+            if ($('order_increment_' + id) != undefined) {
+                $('keen_increment_id').setValue($('order_increment_' + id).getValue());
+            } else {
+                alert('Er is iets fout gegaan (1)');
+            }
+
+            // Set form values
+            if ($('keen_shipment_setting_' + id) != undefined) {
+                var value = $('keen_shipment_setting_' + id).getValue();
+
+                var arrayOfStrings = value.split('&');
+                for (i = 0; i < arrayOfStrings.length; i++) {
+                    value = arrayOfStrings[i];
+                    arrValue = value.split('=');
+                    if (arrValue[0] != 'entity_id' && arrValue[0] != 'increment_id') {
+
+                        elements = $$('[name^="' + arrValue[0] + '"]');
+                        if (elements[0]) {
+                            elements[0].setValue(decodeURIComponent(arrValue[1]));
+                            if (arrValue[0] == 'product') {
+                                setKeenServices();
+
+                            } else if (arrValue[0] == 'service') {
+                                setKeenServiceOptions();
+
+                            }
+                        }
+
+                    }
+
+
+                }
+
+
+                if ($('keen_default_order_' + id) != undefined && $('keen_default_order_' + id).getValue() == 1) {
+                    $('keen_default_order').setValue(1);
+                    $('keen_option_default_method').show();
+                } else {
+                    $('keen_default_order').setValue(0);
+                    $('keen_option_default_method').hide();
+                }
+
+
+            }
+            else {
+                alert('Er is iets fout gegaan (2)');
+            }
+        }
+
+
+        function jetGetFormValueByName(id, name) {
+            result = '';
+
+            if ($('keen_shipment_setting_' + id) != undefined) {
+                var value = $('keen_shipment_setting_' + id).getValue();
+
+                var arrayOfStrings = value.split('&');
+                for (i = 0; i < arrayOfStrings.length; i++) {
+                    value = arrayOfStrings[i];
+                    arrValue = value.split('=');
+                    if (arrValue[0] == name) {
+                        result = arrValue[1];
+                    }
+                }
+
+            }
+            return result;
+        }
+
+
+        function jetGetProductByValue(product_value) {
+            result = '';
+
+            if (Object.keys(shipping_methods).length > 0) {
+                for (var k in shipping_methods) {
+                    if (typeof shipping_methods[k] !== 'function') {
+                        if (shipping_methods[k].value == product_value) {
+                            result = shipping_methods[k].text;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+
+        function jetGetServiceByValue(product_value, service_value) {
+            result = '';
+
+            if (Object.keys(shipping_methods).length > 0) {
+                for (var k in shipping_methods) {
+                    if (typeof shipping_methods[k] !== 'function') {
+                        if (shipping_methods[k].value == product_value) {
+                            if (Object.keys(shipping_methods[k]['services']).length > 0) {
+                                for (var i in shipping_methods[k]['services']) {
+
+                                    if (typeof shipping_methods[k]['services'][i] !== 'function') {
+                                        if (shipping_methods[k]['services'][i]['value'] == service_value) {
+                                            result = shipping_methods[k]['services'][i]['text'];
+                                        }
+
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+
+        }
+
+
+        function jetCloseLightbox() {
+            $$(".keen_lightbox").each(
+                function (item) {
+                    item.hide();
+                }
+            );
+        }
+
+        function jetUpdateTextMessage() {
+            $$(".order_ids").each(
+                function (item) {
+                    var order_text = '';
+                    if (($('keen_shipment_setting_' + item.getValue()) != undefined)) {
+                        product_value = jetGetFormValueByName(item.getValue(), 'product');
+                        product = jetGetProductByValue(product_value);
+
+                        service_value = jetGetFormValueByName(item.getValue(), 'service');
+                        service = jetGetServiceByValue(product_value, service_value);
+
+                        order_text += product + ' / ' + service;
+                        $('keen_order_text_' + item.getValue()).update(order_text);
+                    }
+                }
+            )
+        }
+
+        function jetCheckForm() {
+            var status = true;
+            $$(".keen_shipment_error").each(
+                function (item) {
+                    item.removeClassName('keen_shipment_error');
+                }
+            );
+
+
+            $$(".order_ids").each(
+                function (item) {
+                    if (($('keen_shipment_setting_' + item.getValue()) != undefined)) {
+                        if (!$('keen_shipment_setting_' + item.getValue()).getValue()) {
+                            $('keen_order_' + item.getValue()).addClassName('keen_shipment_error');
+                            status = false;
+                        }
+                    } else {
+                        status = false;
+
+                    }
+                }
+            )
+            return status;
+        }
+
+        function jetStartSendOrders() {
+            keen_shippable_orders = [];
+            keen_send_status = 0;
+            keen_errors = 0;
+            var i = 0;
+
+            if (jetCheckForm()) {
+                //saveDefaultShipmentForm();
+
+                $$(".order_ids").each(
+                    function (item) {
+                        if (($('order_send_status_' + item.getValue()) != undefined)) {
+                            if ($('order_send_status_' + item.getValue()).getValue() == 0) {
+                                keen_shippable_orders[i++] = item.getValue();
+                            }
+                        }
+                    });
+
+                if (keen_shippable_orders.length > 0) {
+                    $('keen_button_send_orders').addClassName('disabled');
+                    $('keen_button_send_orders').disable();
+                    jetSendOrderToJet(0);
+                } else {
+                    alert('Er zijn geen orders om te versturen');
+                }
+
+            }
+            else {
+                alert('Enkele orders zijn niet volledig ingevuld. Wijzig dit om door te gaan.');
+            }
+        }
+
+
+        function jetSendOrderToJet(i) {
+            var order_id = keen_shippable_orders[i];
+
+            jetSetupOrderSetting(order_id);
+            $('keen_order_status_' + order_id).update('Bezig met versturen');
+
+            $('jetverzendt_shipment_form').request({
+                onComplete: function (t) {
+                    if (t.responseText == 1) {
+                        $('order_send_status_' + order_id).setValue(1);
+                        $('keen_order_status_' + order_id).update('<span class="keen_green">Order verzonden</span>');
+                    } else if (t.responseText == 2) {
+                        $('order_send_status_' + order_id).setValue(1);
+                        $('keen_order_status_' + order_id).update('<span class="keen_green">Order verzonden, geen verzending aangemaakt</span>');
+                    } else {
+                        keen_errors++;
+                        $('keen_order_status_' + order_id).update('<span class="keen_red">' + t.responseText + '</span>');
+                    }
+                    keen_send_status++;
+
+                    // when ready...
+                    if (keen_send_status == keen_shippable_orders.length) {
+                        if (keen_errors > 0) {
+                            if (keen_errors == 1) {
+                                alert('Het verzenden is afgerond. Er is ' + keen_errors + ' order mislukt.');
+                            } else {
+                                alert('Het verzenden is afgerond. Er zijn ' + keen_errors + ' orders mislukt.');
+                            }
+                        } else {
+                            alert('Verzenden is succesvol afgerond.');
+                        }
+
+                        $('keen_button_send_orders').removeClassName('disabled');
+                        $('keen_button_send_orders').enable();
+                    } else {
+                        i++;
+                        jetSendOrderToJet(i);
+                    }
+
+                }
+            });
+
+
+        }
+
+
+        //]]>
+    </script>
 <?php endif; ?>

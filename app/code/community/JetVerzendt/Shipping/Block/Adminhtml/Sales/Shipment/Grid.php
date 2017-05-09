@@ -7,7 +7,7 @@ class JetVerzendt_Shipping_Block_Adminhtml_Sales_Shipment_Grid extends Mage_Admi
 
         $this->getMassactionBlock()->addItem(
             'jetverzendt', array(
-                'label' => 'Print Jet Verzendt labels',
+                'label' => 'Print KeenDelivery labels',
                 'url'   => Mage::getModel('adminhtml/url')->getUrl(
                     'adminhtml/jetverzendt/printlabels'
                 )

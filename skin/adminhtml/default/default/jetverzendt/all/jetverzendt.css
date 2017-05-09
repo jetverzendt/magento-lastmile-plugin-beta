@@ -1,13 +1,13 @@
-.jet_shipment_error td {
+.keen_shipment_error td {
     background: rgba(226, 17, 0, 0.25);
 }
 
-.jet_label_printed {
+.keen_label_printed {
     text-align: center;
 
 }
 
-.jet_label_printed .yes {
+.keen_label_printed .yes {
     background-color: #3CB860;
     border-radius: 10px;
     font-weight: bold;
@@ -15,7 +15,7 @@
     text-transform: uppercase;
 }
 
-.jet_label_printed .no {
+.keen_label_printed .no {
     background-color: #E41100;
     border-radius: 10px;
     font-weight: bold;
@@ -23,22 +23,22 @@
     text-transform: uppercase;
 }
 
-.jet_green {
+.keen_green {
     color: #3CB860;
     font-weight: bold;
 }
 
-.jet_red {
+.keen_red {
     color: #E41100;
     font-weight: bold;
 }
 
-.jet_grey {
+.keen_grey {
     font-weight: bold;
     color: grey;
 }
 
-.jet_lightbox {
+.keen_lightbox {
     background-color: white;
     border: 1px solid lightgrey;
     border-radius: 3px;
@@ -49,11 +49,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 900;
+    z-index: 104;
     box-shadow: 0 0 20px #888888;
+    overflow-y: auto;
 }
 
-.jet_lightbox_close {
+.keen_lightbox_close {
     float: right;
     position: relative;
     z-index: 901;
@@ -65,7 +66,7 @@
     background-color: white;
 }
 
-.jet_lightbox_close span {
+.keen_lightbox_close span {
     position: relative;
     left: 8px;
     top: 1px;
@@ -74,13 +75,13 @@
     color: grey;
 }
 
-.jet_tooltip {
+.keen_tooltip {
     position: relative;
     display: inline-block;
     border-bottom: 1px dotted black;
 }
 
-.jet_tooltip .jet_tooltiptext {
+.keen_tooltip .keen_tooltiptext {
     visibility: hidden;
     width: 200px;
     background-color: #FFFBF0;
@@ -95,6 +96,36 @@
     left: 105%;
 }
 
-.jet_tooltip:hover .jet_tooltiptext {
+.keen_tooltip:hover .keen_tooltiptext {
     visibility: visible;
+}
+
+.keen_lightbox .label {
+    float: left;
+    width: 200px;
+}
+
+.keen_lightbox .form-group {
+    padding: 5px 0;
+}
+
+.keen_lightbox .form-group::after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+.keen_lightbox select , .keen_lightbox input[type=text]{
+    width: 270px;
+}
+
+.keen_lightbox input[type=radio] {
+    margin-right: 5px;
+}
+
+.keen_lightbox label {
+    margin-right: 15px;
 }
