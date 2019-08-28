@@ -6,6 +6,7 @@ app/etc/modules/JetVerzendt_Shipping.xml            app/etc/modules/JetVerzendt_
 # app/design
 app/design/frontend/default/default/template/email/order/shipment/track.phtml            app/design/frontend/default/default/template/email/order/shipment/track.phtml
 app/design/frontend/base/default/layout/jetverzendt.xml            app/design/frontend/base/default/layout/jetverzendt.xml
+app/design/frontend/base/default/template/jetverzendt/core/sales/order/email/lastmile.phtml            app/design/frontend/base/default/template/jetverzendt/core/sales/order/email/lastmile.phtml
 app/design/frontend/base/default/template/jetverzendt/js.phtml            app/design/frontend/base/default/template/jetverzendt/js.phtml
 app/design/frontend/base/default/template/jetverzendt/deliverdates/dpd_dates.phtml            app/design/frontend/base/default/template/jetverzendt/deliverdates/dpd_dates.phtml
 app/design/frontend/base/default/template/jetverzendt/deliverdates/dhl_dates.phtml            app/design/frontend/base/default/template/jetverzendt/deliverdates/dhl_dates.phtml
@@ -27,4 +28,5 @@ js/jetverzendt/admin.js            js/jetverzendt/admin.js
 skin/frontend/base/default/css/jetverzendt.css            skin/frontend/base/default/css/jetverzendt.css
 skin/frontend/base/default/images/jetverzendt/marker_dhl.png            skin/frontend/base/default/images/jetverzendt/marker_dhl.png
 skin/frontend/base/default/images/jetverzendt/marker_dpd.png            skin/frontend/base/default/images/jetverzendt/marker_dpd.png
+skin/frontend/base/default/images/jetverzendt/search-icon.png            skin/frontend/base/default/images/jetverzendt/search-icon.png
 skin/adminhtml/default/default/jetverzendt/all/jetverzendt.css            skin/adminhtml/default/default/jetverzendt/all/jetverzendt.css
