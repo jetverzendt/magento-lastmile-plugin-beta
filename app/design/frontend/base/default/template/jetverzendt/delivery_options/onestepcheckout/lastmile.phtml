@@ -1,16 +1,70 @@
-<div id="jet_last_mile" style="display: block;">
+<div id="jet_last_mile" style="display: none;">
     <h4>Bezorg opties:</h4>
-    <?php
-    $jetShippers = Mage::helper('jetverzendt_shipping')->getShipmentShippers();
-    ?>
 
     <div id="jet_last_mile_choice">
         <strong>Uw gemaakte keuze: </strong><br/>
-        <span id="jet_name_lastmile"></span>
-        <a id="clear_last_mile" href="javascript:void(0)" class="jet_small" style="display: none">(wissen)</a>
+        <div id="jet_name_lastmile"></div>
+        <a href="javascript:void(0)" id="clear_last_mile" style="<?php
+        $newHandlingFee = Mage::getSingleton('core/session')->getLastmileShipmentFee();
+        if (isset($newHandlingFee) && $newHandlingFee > 0) {
+            echo 'display: block;';
+        } else {
+            echo 'display: none;';
+        }
+        ?>">Wis Lastmile keuze</a>
     </div>
 
-    <?php if (in_array('DHL', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileDeliveryDhlEnable() && Mage::helper('jetverzendt_shipping')->getQuoteShippingAddressCountry() == 'NL'
+
+    <?php
+    $lastmileFadelloTime
+        = Mage::helper('jetverzendt_shipping')->getLastmileFadelloTime();
+    $checkValidWeightsForFadello
+        = Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(30);
+    if ($checkValidWeightsForFadello && Mage::helper('jetverzendt_shipping')->isLastmileFadelloEnable() && Mage::getModel('core/date')->date('His') < $lastmileFadelloTime
+        && Mage::helper(
+            'jetverzendt_shipping'
+        )->getQuoteShippingAddressCountry() == 'NL'
+    ) :
+        ?>
+
+        <div>
+            <a class="button lastmile-button" id="jet_link_fadello">Same Day Delivery <?php
+                $lastmilePriceFadello
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceFadello();
+                if ($lastmilePriceFadello > 0) {
+                    echo ' ( + ' . Mage::helper('core')->currency($this->escapeHtml($lastmilePriceFadello, true, false)) . ')';
+                }
+                ?></a>
+        </div>
+
+    <?php endif; ?>
+
+
+
+    <?php
+    $checkValidWeightsForNextDayPremium
+        = Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(30);
+    if ($checkValidWeightsForNextDayPremium && Mage::helper('jetverzendt_shipping')->isLastmileNextDayPremiumEnable()
+        && Mage::helper(
+            'jetverzendt_shipping'
+        )->getQuoteShippingAddressCountry() == 'NL'
+    ) :
+        ?>
+
+        <div>
+            <a class="button lastmile-button" id="jet_link_nextdaypremium">Next Day Premium <?php
+                $lastmilePriceNextDayPremium
+                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceNextDayPremium();
+                if ($lastmilePriceNextDayPremium > 0) {
+                    echo ' ( + ' . Mage::helper('core')->currency($this->escapeHtml($lastmilePriceNextDayPremium, true, false)) . ')';
+                }
+                ?></a>
+        </div>
+
+    <?php endif; ?>
+
+
+    <?php if (Mage::helper('jetverzendt_shipping')->isLastmileDeliveryDhlEnable() && Mage::helper('jetverzendt_shipping')->getQuoteShippingAddressCountry() == 'NL'
         && Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(20)
     ) : ?>
         <div>
@@ -18,9 +72,9 @@
         </div>
     <?php endif ?>
 
-    <?php if (in_array('DPD', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileSaterdayDpdEnable() && Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(31)) : ?>
+    <?php if (Mage::helper('jetverzendt_shipping')->isLastmileSaterdayDpdEnable() && Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(31)) : ?>
         <div>
-            <a class="button lastmile-button" id="jet_link_dpd_saterday">Zaterdaglevering<?php
+            <a class="button lastmile-button" href="javascript:void(0)" id="jet_link_dpd_saterday">Zaterdaglevering<?php
                 $lastmilePriceDpdSaterday
                     = Mage::helper('jetverzendt_shipping')->getLastmilePriceDpdSaterday();
                 if ($lastmilePriceDpdSaterday > 0) {
@@ -29,6 +83,7 @@
                 ?></a>
         </div>
     <?php endif ?>
+
 
 
     <?php
@@ -71,56 +126,6 @@
     <?php endif; ?>
 
 
-    <?php
-    $lastmileFadelloTime
-        = Mage::helper('jetverzendt_shipping')->getLastmileFadelloTime();
-    $checkValidWeightsForFadello
-        = Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(30);
-    if ($checkValidWeightsForFadello && in_array('Fadello', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileFadelloEnable() && Mage::getModel('core/date')->date('His') < $lastmileFadelloTime
-        && Mage::helper(
-            'jetverzendt_shipping'
-        )->getQuoteShippingAddressCountry() == 'NL'
-    ) :
-        ?>
-
-        <div>
-            <a class="button lastmile-button" id="jet_link_fadello">Same Day Delivery <?php
-                $lastmilePriceFadello
-                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceFadello();
-                if ($lastmilePriceFadello > 0) {
-                    echo ' ( + ' . Mage::helper('core')->currency($this->escapeHtml($lastmilePriceFadello, true, false)) . ')';
-                }
-                ?></a>
-        </div>
-
-    <?php endif; ?>
-
-
-
-    <?php
-    $checkValidWeightsForNextDayPremium
-        = Mage::helper('jetverzendt_shipping')->checkValidWeightsByKg(30);
-    if ($checkValidWeightsForNextDayPremium && in_array('NextDayPremium', $jetShippers) && Mage::helper('jetverzendt_shipping')->isLastmileNextDayPremiumEnable()
-        && Mage::helper(
-            'jetverzendt_shipping'
-        )->getQuoteShippingAddressCountry() == 'NL'
-    ) :
-        ?>
-
-        <div>
-            <a class="button lastmile-button" id="jet_link_nextdaypremium">Next Day Delivery <?php
-                $lastmilePriceNextDayPremium
-                    = Mage::helper('jetverzendt_shipping')->getLastmilePriceNextDayPremium();
-                if ($lastmilePriceNextDayPremium > 0) {
-                    echo ' ( + ' . Mage::helper('core')->currency($this->escapeHtml($lastmilePriceNextDayPremium, true, false)) . ')';
-                }
-                ?></a>
-        </div>
-
-    <?php endif; ?>
-
-
-
     <div id="lastmile_lightbox" style="display: none">
         <div id="lastmile_lightbox_close">×</div>
         <div id="lastmile_lightbox_content"></div>
@@ -146,6 +151,7 @@
                 if (el.checked == true) {
                     var getShippingCode = el.getValue();
                     if (checkIfMethodIsJetVerzendtMethod(getShippingCode)) {
+                        //$(el).next().insert({ after: "" });
                         $('jet_last_mile').show();
                     } else {
                         if ($('lastmile_type') != undefined) $('lastmile_type').clear();
@@ -219,7 +225,7 @@
             $('jet_name_lastmile').update('Same Day Delivery');
             $('jet_last_mile_choice').show();
             $('clear_last_mile').show();
-
+            setService();
         });
     }
 
@@ -228,10 +234,19 @@
         Event.observe($('jet_link_nextdaypremium'), 'click', function () {
             $('lastmile_type').setValue('nextdaypremium');
             $('lastmile_service').setValue('NextDayPremium');
-            $('jet_name_lastmile').update('Next Day Delivery');
+            $('jet_name_lastmile').update('Next Day Premium');
             $('jet_last_mile_choice').show();
-
+            $('clear_last_mile').show();
+            setService();
         });
+    }
+
+    function clear_last_mile() {
+        $('jet_name_lastmile').update('');
+        $('lastmile_type').setValue('');
+        $('lastmile_service').setValue('');
+        $('jet_last_mile_choice').hide();
+        setService();
     }
 
 
@@ -303,9 +318,6 @@
             lastmile_parcelshop_description = $('lastmile_parcelshop_description').value;
         }
 
-        var url = "<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate/')?>";
-        var totals = get_totals_element();
-        totals.update('<div class="loading-ajax">&nbsp;</div>');
         arr_parameters = {
             lastmile_type: lastmile_type,
             lastmile_service: lastmile_service,
@@ -321,89 +333,32 @@
             parameters: arr_parameters,
             onSuccess: function (transport) {
 
-                set_service_save_methods_function(url, false);
+                //set_service_save_methods_function(url, false);
+
+                oscUpdateTotals('<?php echo $this->getUrl('onestepcheckout/ajax/updatecart', array('_secure' => true)); ?>', '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure' => true)); ?>');
             }
         });
     }
 
 
-    function set_service_save_methods_function(url, update_payments) {
-        if (typeof update_payments == 'undefined') {
-            var update_payments = false;
-        }
-        var form = $('onestepcheckout-form');
-        var shipping_method = $RF(form, 'shipping_method');
-        var payment_method = $RF(form, 'payment[method]');
-        var totals = get_totals_element();
+    function oscUpdateTotals(url, separate_url) {
 
-        var freeMethod = $('p_method_free');
-        if (freeMethod) {
-            payment.reloadcallback = true;
-            payment.countreload = 1;
+        var qtyElem = $$('input.qtyinput');
+
+        if (qtyElem) {
+            qtyElem = qtyElem[0];
+            var qty = parseInt(qtyElem.value);
         }
 
-        totals.update('<div class="loading-ajax">&nbsp;</div>');
+        qtyElem.value = qty;
 
-        if (update_payments) {
-            var payment_methods = $$('div.payment-methods')[0];
-            payment_methods.update('<div class="loading-ajax">&nbsp;</div>');
-        }
+        var params = {}
+        params[qtyElem.name] = qtyElem.value;
 
-        var parameters = {
-            shipping_method: shipping_method,
-            payment_method: payment_method
-        }
+        oscUpdateCartCall(params, url, separate_url);
 
-        /* Find payment parameters and include */
-        var items = $$('input[name^=payment]').concat($$('select[name^=payment]'));
-        var names = items.pluck('name');
-        var values = items.pluck('value');
-
-        for (var x = 0; x < names.length; x++) {
-            if (names[x] != 'payment[method]') {
-                parameters[names[x]] = values[x];
-            }
-        }
-
-        new Ajax.Request(url, {
-            method: 'post',
-            onSuccess: function (transport) {
-                if (transport.status == 200) {
-                    var data = transport.responseText.evalJSON();
-                    var form = $('onestepcheckout-form');
-
-                    totals.update(data.summary);
-
-                    if (update_payments) {
-
-                        payment_methods.replace(data.payment_method);
-
-                        $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', get_separate_save_methods_function(url));
-                        $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', function () {
-                            $$('div.onestepcheckout-payment-method-error').each(function (item) {
-                                new Effect.Fade(item);
-                            });
-                        });
-
-                        if ($RF($('onestepcheckout-form'), 'payment[method]') != null) {
-                            try {
-                                var payment_method = $RF(form, 'payment[method]');
-                                $('container_payment_method_' + payment_method).show();
-                                $('payment_form_' + payment_method).show();
-                            } catch (err) {
-
-                            }
-                        }
-                    }
-                }
-            },
-            onFailure: function (transport) {
-                window.location.replace(transport.transport.responseURL.replace('onestepcheckout/ajax/set_methods_separate/', 'checkout/cart/'));
-            },
-            parameters: parameters
-        });
-        // }
     }
+    ;
 
     checkIfOpenJetLastMileChoices();
 

@@ -4,7 +4,7 @@
 class JetVerzendt_Shipping_Model_System_Config_Source_Printer
 {
     /**
-     * Options getter for Jet Verzendt config page select box
+     * Options getter for KeenDelivery config page select box
      *
      * @return array
      */

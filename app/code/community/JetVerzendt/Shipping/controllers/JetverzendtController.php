@@ -15,132 +15,123 @@ class JetVerzendt_Shipping_JetverzendtController extends Mage_Adminhtml_Controll
     }
 
     /**
-     *
+     * Bulk update for multiple orders
      */
     public function updateordersAction()
     {
-        $lastUpdate = Mage::getSingleton('core/session')->getLastUpdateFromJetverzendt();
 
-        if (!isset($lastUpdate) || (time() - $lastUpdate) >= 30) { // update every 30 seconds
 
-            // set variables
-            $fromDate = Mage::getModel('core/date')->date('Y-m-d H:i:s', strtotime('-5 week'));
-            $toDate   = Mage::getModel('core/date')->date('Y-m-d H:i:s', strtotime('now'));
+        // set variables
+        $fromDate = Mage::getModel('core/date')->date('Y-m-d H:i:s', strtotime('-10 week'));
+        $toDate = Mage::getModel('core/date')->date('Y-m-d H:i:s', strtotime('now'));
 
-            // get orders
-            $collection = Mage::getModel('jetverzendt_shipping/shipment')->getCollection();
-            $collection->addFieldToFilter('jet_shipment_id', array('notnull' => true));
-            $collection->addFieldToFilter('s_o.created_at', array('from' => $fromDate, 'to' => $toDate));
-            $collection->addFieldToFilter(
-                array('main_table.label_printed', 'main_table.jet_updated_at', 'j_p.track_trace_key'),
-                array(
-                    array('like' => '0'),
-                    array('null' => true),
-                    array('null' => true)
+        // get orders
+        $collection = Mage::getModel('jetverzendt_shipping/shipment')->getCollection();
+        $collection->addFieldToFilter('jet_shipment_id', array('notnull' => true));
+        $collection->addFieldToFilter('s_o.created_at', array('from' => $fromDate, 'to' => $toDate));
+        $collection->addFieldToFilter(
+            array('main_table.label_printed', 'main_table.jet_updated_at', 'j_p.track_trace_key'),
+            array(
+                array('like' => '0'),
+                array('null' => true),
+                array('null' => true)
+            )
+        );
+        $collection->getSelect()->join(
+            array(
+                's_o' => Mage::getSingleton('core/resource')->getTableName(
+                    'sales/order'
                 )
-            );
-            $collection->getSelect()->join(
-                array(
-                    's_o' => Mage::getSingleton('core/resource')->getTableName(
-                        'sales/order'
-                    )
-                ),
-                'main_table.mage_order_id = s_o.entity_id', array('s_o.created_at')
-            );
-            $collection->getSelect()->joinLeft(
-                array(
-                    'j_p' => Mage::getSingleton('core/resource')->getTableName(
-                        'jetverzendt_shipping/package'
-                    )
-                ),
-                'main_table.mage_order_id = j_p.mage_order_id', array('j_p.track_trace_key')
-            );
+            ),
+            'main_table.mage_order_id = s_o.entity_id', array('s_o.created_at')
+        );
+        $collection->getSelect()->joinLeft(
+            array(
+                'j_p' => Mage::getSingleton('core/resource')->getTableName(
+                    'jetverzendt_shipping/package'
+                )
+            ),
+            'main_table.mage_order_id = j_p.mage_order_id', array('j_p.track_trace_key')
+        );
 
-            $collection->getSelect()->group('main_table.mage_order_id');
-            //echo $collection->getSelect()->group('main_table.mage_order_id');
+        $collection->getSelect()->group('main_table.mage_order_id');
 
 
-            // foreach orderdata
-            foreach ($collection as $order) {
-                $result = Mage::helper('jetverzendt_shipping')->retrieveOrderFromJetVerzendt($order);
+        // foreach orderdata
+        foreach ($collection as $order) {
+            $result = Mage::helper('jetverzendt_shipping')->retrieveOrderFromJetVerzendt($order);
 
-                if (!$result) { // no server connection
-                    //Mage::log('Fout bij maken van portal', null, 'jetverzendt.log');
+            if (!$result) { // no server connection
+                //Mage::log('Fout bij maken van portal', null, 'jetverzendt.log');
 
-                } elseif ($result->track_and_trace && $result->shipment_method) { // if not empty track&trace and shipment method info
+            } elseif ($result->track_and_trace && $result->shipment_method) { // if not empty track&trace and shipment method info
 
-                    $shipment = Mage::getModel('jetverzendt_shipping/shipment')->load($order->getJetShipmentId(), 'jet_shipment_id');
-
-
-                    if ($order->getMageOrderId() > 0) {
-                        if ($result->updated_at != $shipment->getJetUpdatedAt()) { // an update!
+                $shipment = Mage::getModel('jetverzendt_shipping/shipment')->load($order->getJetShipmentId(), 'jet_shipment_id');
 
 
-                            // update shipment table
-                            $shipment->setNumberOfPackages($result->data->amount)
-                                ->setPickupDate($result->pickup_date)
-                                ->setLabelPrinted(($result->status == 5) ? 1 : 0)
-                                ->setJetUpdatedAt($result->updated_at)
+                if ($order->getMageOrderId() > 0) {
+                    if ($result->updated_at != $shipment->getJetUpdatedAt()) { // an update!
+
+
+                        // update shipment table
+                        $shipment->setNumberOfPackages($result->data->amount)
+                            ->setPickupDate($result->pickup_date)
+                            ->setLabelPrinted(($result->status == 5) ? 1 : 0)
+                            ->setJetUpdatedAt($result->updated_at)
+                            ->save();
+
+
+                        // delete current track/trace info for new update
+                        $currentPackages = Mage::getModel('jetverzendt_shipping/package')->getCollection();
+                        $currentPackages->addFieldToFilter('mage_order_id', $order->getMageOrderId());
+
+                        foreach ($currentPackages as $pack) {
+                            $pack->delete();
+                        }
+
+                        // insert track/trace and shipment info
+                        foreach ($result->track_and_trace as $key => $url) {
+                            Mage::getModel('jetverzendt_shipping/package')
+                                ->setMageOrderId($order->getMageOrderId())
+                                ->setTrackTraceKey($key)
+                                ->setTrackTraceUrl($url)
+                                ->setShipmentMethodName(
+                                    $result->shipment_method->name
+                                )
+                                ->setShipmentMethodClass(
+                                    $result->shipment_method->class
+                                )
                                 ->save();
 
-
-                            // delete current track/trace info for new update
-                            $currentPackages = Mage::getModel('jetverzendt_shipping/package')->getCollection();
-                            $currentPackages->addFieldToFilter('mage_order_id', $order->getMageOrderId());
-
-                            foreach ($currentPackages as $pack) {
-                                $pack->delete();
-                            }
-
-                            // insert track/trace and shipment info
-                            foreach ($result->track_and_trace as $key => $url) {
-                                Mage::getModel('jetverzendt_shipping/package')
-                                    ->setMageOrderId($order->getMageOrderId())
-                                    ->setTrackTraceKey($key)
-                                    ->setTrackTraceUrl($url)
-                                    ->setShipmentMethodName(
-                                        $result->shipment_method->name
-                                    )
-                                    ->setShipmentMethodClass(
-                                        $result->shipment_method->class
-                                    )
-                                    ->save();
-                            }
-
-
                         }
-                    } else {
-                        //Mage::log('Fout bij ophalen track & trace info', null, 'jetverzendt.log');
+
 
                     }
-                } else {
-                    //Mage::log('Wachten op track & trace info van Jet Verzendt Portal', null, 'jetverzendt.log');
                 }
-
             }
 
 
-            Mage::getSingleton('core/session')->setLastUpdateFromJetverzendt(time());
         }
-        exit;
+        return;
     }
 
 
     /**
+     * Print KeenDelivery labels
+     *
      * @throws Exception
      */
     public function printlabelsAction()
     {
 
         $jetIds = array();
-        $ids    = $this->getRequest()->getPost('shipment_ids');
-        if (isset($ids) && is_array($ids)) {
+        $ids = $this->getRequest()->getPost('shipment_ids');
 
+        if (isset($ids) && is_array($ids)) {
             try {
 
                 $collection = Mage::getModel('sales/order_shipment')->getCollection();
                 $collection->addAttributeToFilter('j_s.jet_shipment_id', array('notnull' => true));
-                $collection->addAttributeToFilter('j_s.jet_updated_at', array('notnull' => true));
                 $collection->addAttributeToFilter('entity_id', array('in' => $ids));
                 $collection->getSelect()->join(
                     array('j_s' => Mage::getSingleton('core/resource')->getTableName('jetverzendt_shipping/shipment')),
@@ -149,10 +140,17 @@ class JetVerzendt_Shipping_JetverzendtController extends Mage_Adminhtml_Controll
 
                 foreach ($collection as $order) {
                     $jetIds[] = $order->getJetShipmentId();
+
+                    $shipment = Mage::getModel('jetverzendt_shipping/shipment')->load($order->getJetShipmentId(), 'jet_shipment_id');
+                    $shipment->setLabelPrinted(1);
+                    $shipment->setJetUpdatedAt(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
+                    $shipment->save();
                 }
 
                 if (!empty($jetIds)) {
                     Mage::helper('jetverzendt_shipping')->retrieveLabelsFromJetVerzendt($jetIds);
+
+
                 } else {
                     Mage::getSingleton('core/session')->addError('Helaas... Deze labels kunnen niet worden afgedrukt');
                     Mage::app()->getResponse()->setRedirect(
@@ -167,13 +165,13 @@ class JetVerzendt_Shipping_JetverzendtController extends Mage_Adminhtml_Controll
                 Mage::log($debugData, null, 'jetverzendt.log');
                 throw $e;
             }
-            exit;
+            return '';
         }
 
     }
 
     /**
-     * Bulk order send to Jet Verzendt
+     * Bulk order send to KeenDelivery
      */
     public function overviewAction()
     {
@@ -216,16 +214,16 @@ class JetVerzendt_Shipping_JetverzendtController extends Mage_Adminhtml_Controll
             }
 
         }
-        exit;
+        return '';
     }
 
     /**
-     * Bulk order send action to Jet Verzendt
+     * Bulk order send action to KeenDelivery
      */
     public function sendordersAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $postData                   = $this->getRequest()->getPost();
+            $postData = $this->getRequest()->getPost();
             $defaultShipmentSettingTime = Mage::getStoreConfig('jetverzendt/default_shipment_form_time');
             $defaultShipmentSettingTime = (isset($defaultShipmentSettingTime) && $defaultShipmentSettingTime > 0) ? (int)$defaultShipmentSettingTime : 0;
 
@@ -241,54 +239,108 @@ class JetVerzendt_Shipping_JetverzendtController extends Mage_Adminhtml_Controll
             }
 
             // get current; order ID
-            $orderId = (isset($postData['entity_id']) && $postData['entity_id'] > 0) ? $postData['entity_id'] : die("Ongeldige invoer");
+            $orderId = (isset($postData['entity_id']) && $postData['entity_id'] > 0) ? $postData['entity_id'] : "Ongeldige invoer";
 
             $order = Mage::getModel('sales/order')->load($orderId);
-            //if ( $order->canShip() ) {
 
 
             $result = Mage::helper('jetverzendt_shipping')->sendOrdersToJetVerzendt($order, $postData);
 
             if (isset($result->shipment_id) && (int)$result->shipment_id > 0) { // request successful
 
+
                 // create new shipment row in jetverzendt shipment table
                 $new_shipment = Mage::getModel('jetverzendt_shipping/shipment');
                 $new_shipment->setMageOrderId($orderId);
                 $new_shipment->setNumberOfPackages($postData['amount']);
                 $new_shipment->setPickupDate(
-                    (isset($_POST['pickup_date']) && !empty($_POST['pickup_date'])) ? Mage::getModel('core/date')->date(
-                        'Y-m-d', strtotime($_POST['pickup_date'])
+                    (isset($postData['pickup_date']) && !empty($postData['pickup_date'])) ? Mage::getModel('core/date')->date(
+                        'Y-m-d', strtotime($postData['pickup_date'])
                     ) : Mage::getModel('core/date')->date('Y-m-d')
                 );
+                $new_shipment->setLabelPrinted(0);
+                $new_shipment->setJetUpdatedAt(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
                 $new_shipment->setJetShipmentId($result->shipment_id);
                 $new_shipment->save();
 
 
-                $shipmentStatus = Mage::helper('jetverzendt_shipping')->createShipmentFromOrder($orderId);
+                // delete current track/trace info for new update
+                /*$currentPackages = Mage::getModel('jetverzendt_shipping/package')->getCollection();
+                $currentPackages->addFieldToFilter('mage_order_id', $orderId);
+
+                foreach ($currentPackages as $pack) {
+                    $pack->delete();
+                }*/
+
+                // insert track/trace and shipment info
+                foreach ($result->track_and_trace as $key => $url) {
+                    if (isset($key) && isset($url)) {
+                        // Store in Keen package table
+                        Mage::getModel('jetverzendt_shipping/package')
+                            ->setMageOrderId($orderId)
+                            ->setTrackTraceKey($key)
+                            ->setTrackTraceUrl($url)
+                            ->setShipmentMethodName(
+                                $result->shipment_method->name
+                            )
+                            ->setShipmentMethodClass(
+                                $result->shipment_method->class
+                            )
+                            ->save();
+
+                    }
+                }
+
+
+                $shipmentId = Mage::helper('jetverzendt_shipping')->createShipmentFromOrder($orderId);
                 Mage::helper('jetverzendt_shipping')->changeOrderStatusToComplete($orderId);
-                if ($shipmentStatus === false) {
-                    echo "2";
+                if ($shipmentId === false) {
+                    $this->getResponse()->setBody("2");
                 } else {
-                    echo "1";
+                    // new shipment created
+                    $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId, 'increment_id');
+
+                    if (!$shipment->getId()) {
+                        $this->_fault('not_exists');
+                    }
+
+
+                    foreach ($result->track_and_trace as $key => $url) {
+                        if (isset($key) && isset($url)) {
+
+                            $track = Mage::getModel('sales/order_shipment_track')
+                                ->setNumber($key)
+                                ->setCarrierCode('custom')
+                                ->setTitle($result->shipment_method->name);
+
+                            $shipment->addTrack($track);
+
+                            try {
+                                $shipment->save();
+                                $track->save();
+                            } catch (Mage_Core_Exception $e) {
+                                $this->_fault('data_invalid', $e->getMessage());
+                            }
+                        }
+                    }
+
+                    $this->getResponse()->setBody("1");
                 }
 
 
             } else { // jet error
 
                 if (!$result) { // no server connection
-                    $error = 'Fout bij verbinding maken met Jet Verzendt portal. Controleer uw instellingen.';
+                    $error = 'Fout bij verbinding maken met KeenDelivery portal. Controleer uw instellingen.';
                 } else {
 
                     // convert different array formats to a single array
                     $result = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($result)), 0);
-                    $error  = implode('<br/> -', $result);
+                    $error = implode('<br/> -', $result);
                 }
-                echo $error;
+                $this->getResponse()->setBody($error);
             }
-            //} else {
-            //	die( "Deze order kan niet verzonden worden" );
-            //}
-            exit;
+            return '';
         }
     }
 

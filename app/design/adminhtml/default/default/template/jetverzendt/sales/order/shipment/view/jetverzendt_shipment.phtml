@@ -96,7 +96,7 @@ $lastmile = (isset($lastmile)) ? @unserialize($lastmile) : false;
             ?>
 
             <tr>
-                <td class="label"><label><?php echo $package->getShipmentMethodName(); ?></label></td>
+                <td class="label"><label><?php echo $this->__('Print label') ?></label></td>
                 <td class="value"><a
                         href="<?php echo $this->escapeUrl($package->getTrackTraceUrl()); ?>"
                         target="_blank"><?php echo $this->escapeHtml($package->getTrackTraceKey()) ?></a>

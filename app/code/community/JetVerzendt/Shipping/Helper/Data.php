@@ -8,9 +8,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     const STORE_CONFIG_PATH_TOKEN = 'jetverzendt/jetverzendt_authorisation/jetverzendt_token';
     const STORE_CONFIG_PATH_LIVE_STATUS = 'jetverzendt/jetverzendt_authorisation/jetverzendt_live_status';
 
-    const STORE_CONFIG_PATH_SHIPPING_SHIPPERS = 'jetverzendt/jetverzendt_carriers/jetverzendt_shipping_shippers';
-    const STORE_CONFIG_PATH_SHIPPING_METHODS = 'jetverzendt/jetverzendt_carriers/jetverzendt_shipping_methods';
-
     const STORE_CONFIG_PATH_PRINTER_METHODS = 'jetverzendt/jetverzendt_printer/jetverzendt_printer_methods';
     const STORE_CONFIG_PATH_PRINTER_LABEL = 'jetverzendt/jetverzendt_printer/jetverzendt_printer_label';
 
@@ -18,6 +15,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
     // Last mile: yes or no
     const STORE_CONFIG_PATH_LASTMILE_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_enable';
+    const STORE_CONFIG_PATH_SHIPPING_METHODS = 'jetverzendt/jetverzendt_lastmile/jetverzendt_shipping_methods';
     const STORE_CONFIG_PATH_LASTMILE_STATUS_COMPLETE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_status_complete';
 
     // DHL Last Mile Delivery
@@ -53,7 +51,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      *
-     * Check if an order in the Jet Verzendt config setting default is assigned to Jet Verzendt
+     * Check if an order in the KeenDelivery config setting default is assigned to KeenDelivery
      *
      * @param $orderId
      *
@@ -61,11 +59,11 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isDefaultJetVerzendtOrder($orderId)
     {
-        $value           = false;
+        $value = false;
         $shippingMethods = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_SHIPPING_METHODS, Mage::app()->getStore()
         );
-        $order           = Mage::getModel('sales/order')->load($orderId);
+        $order = Mage::getModel('sales/order')->load($orderId);
 
         if ($shippingMethods && $order) {
             $shippingMethods = explode(',', $shippingMethods);
@@ -82,7 +80,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
-     * Get the default Jet Verzendt shipment method (as example: returns: "flatrate")
+     * Get the default KeenDelivery shipment method (as example: returns: "flatrate")
      *
      * @return mixed
      */
@@ -294,7 +292,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
 
-
     /**
      * @param $orderId
      *
@@ -306,21 +303,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             $orderId
         );
 
-    }
-
-
-    /**
-     * Get Jet Verzendt Shipment Shippers
-     *
-     * @return array
-     */
-    public function getShipmentShippers()
-    {
-        $shipmentShippers = Mage::getStoreConfig(
-            self::STORE_CONFIG_PATH_SHIPPING_SHIPPERS, Mage::app()->getStore()
-        );
-
-        return explode(',', $shipmentShippers);
     }
 
 
@@ -353,7 +335,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
-     * Send an order to the Jet Verzendt server
+     * Send an order to the KeenDelivery server
      *
      * @param $order
      * @param $postData
@@ -362,16 +344,16 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function sendOrdersToJetVerzendt($order, $postData)
     {
-
         $token = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_TOKEN, Mage::app()->getStore()
         );
+
         if (!$token) {
             Mage::log(
                 "Vul uw JetVerzendt autorisatiegegevens correct in", null,
                 'jetverzendt.log'
             );
-            exit;
+            return 'Invalid login';
         }
 
         // check auto tracktrace mail option
@@ -384,93 +366,44 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             $order->getShippingAddress()->getData('street')
         );
 
-        $shipmentData                   = array();
-        $shipmentData['company_name']   = $order->getShippingAddress()
+        $shipmentData = array();
+        $shipmentData['company_name'] = $order->getShippingAddress()
             ->getCompany();
-        $shipmentData['street_line_1']  = $street[0];
-        $shipmentData['number_line_1']  = $street[1];
-        $shipmentData['zip_code']       = $order->getShippingAddress()
+        $shipmentData['street_line_1'] = $street[0];
+        $shipmentData['number_line_1'] = $street[1];
+        $shipmentData['zip_code'] = $order->getShippingAddress()
             ->getPostcode();
-        $shipmentData['city']           = $order->getShippingAddress()->getCity();
-        $shipmentData['country']        = $order->getShippingAddress()
+        $shipmentData['city'] = $order->getShippingAddress()->getCity();
+        $shipmentData['country'] = $order->getShippingAddress()
             ->getCountry();
         $shipmentData['contact_person'] = $order->getShippingAddress()
                 ->getFirstname() . ' ' . $order->getShippingAddress()
                 ->getMiddlename() . ' '
             . $order->getShippingAddress()->getLastname();
 
-        $userData              = $this->getUserDetails($order);
+        $userData = $this->getUserDetails($order);
         $shipmentData['phone'] = $userData['telephone'];
         $shipmentData['email'] = $userData['email'];
 
-        $shipmentData['pickup_date']  = (isset($postData['pickup_date'])
-            && !empty($postData['pickup_date'])) ? date(
-            'Y-m-d', strtotime($postData['pickup_date'])
-        ) : Mage::getModel('core/date')->date('Y-m-d', strtotime("+1 day"));
-        $shipmentData['product']      = (isset($postData['product'])
-            && $postData['product']) ? $postData['product'] : '';
-        $shipmentData['service']      = (isset($postData['service'])
-            && $postData['service']) ? $postData['service'] : '';
-        $shipmentData['product_type'] = '2';
-        $shipmentData['amount']       = (isset($postData['amount'])
-            && $postData['amount']) ? $postData['amount'] : '';
-
-        if (isset($postData['reference']) && !empty($postData['reference'])) {
-            $shipmentData['reference'] = $postData['reference'];
-        } elseif (isset($postData['increment_id'])
-            && !empty($postData['increment_id'])
-        ) {
-            $shipmentData['reference'] = $postData['increment_id'];
-        } else {
-            $shipmentData['reference'] = '';
+        if (isset($postData) && is_array($postData)) {
+            $shipmentData = array_merge($shipmentData, $postData);
         }
-        $shipmentData['predict']                    = (isset($postData['predict'])
-            && $postData['predict']) ? $postData['predict'] : '';
-        $shipmentData['cod']                        = (isset($postData['cod'])
-            && $postData['cod']) ? number_format($postData['cod'], 2, ',', '')
-            : '';
-        $shipmentData['saturday_delivery']
-                                                    = (isset($postData['saturday_delivery'])
-            && $postData['saturday_delivery']) ? 1 : 0;
-        $shipmentData['weight']
-                                                    = (isset($postData['weight'])
-            && $postData['weight']) ? $postData['weight'] : '';
-        $shipmentData['signature_required']
-                                                    = (isset($postData['signature_required'])
-            && $postData['signature_required']) ? 1 : 0;
-        $shipmentData['not_by_neighbours']
-                                                    = (isset($postData['not_by_neighbours'])
-            && $postData['not_by_neighbours']) ? 1 : 0;
-        $shipmentData['evening']
-                                                    = (isset($postData['evening'])
-            && $postData['evening']) ? 1 : 0;
-        $shipmentData['extra_insurance']
-                                                    = (isset($postData['extra_insurance'])
-            && $postData['extra_insurance']) ? number_format(
-            $postData['extra_insurance'], 2, ',', ''
-        ) : '';
-        $shipmentData['insurance']
-                                                    = (isset($postData['insurance'])
-            && $postData['insurance']) ? number_format(
-            $postData['insurance'], 2, ',', ''
-        ) : '';
-        $shipmentData['parcel_shop_id']
-                                                    = (isset($postData['parcel_shop_id'])
-            && $postData['parcel_shop_id']) ? $postData['parcel_shop_id'] : '';
-        $shipmentData['send_track_and_trace_email'] = $autoTrackTrace;
-        $shipmentData['input_source'] = 'magento';
+
+        if (isset($shipmentData['reference']) == false || empty($shipmentData['reference']) && isset($shipmentData['increment_id'])) {
+            $shipmentData['reference'] = $shipmentData['increment_id'];
+        }
 
         $apiStatus = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_LIVE_STATUS, Mage::app()->getStore()
         );
         if ($apiStatus) {
             $ch = curl_init(
-                'https://portal.jetverzendt.nl/api/v2/shipment?api_token='
+                'https://portal.keendelivery.com/api/v2/shipment?api_token='
                 . $token
             );
         } else {
             $ch = curl_init(
-                'http://testportal.jetverzendt.nl/api/v2/shipment?api_token='
+                'http://testportal.keendelivery.com/api/v2/shipment?api_token='
                 . $token
             );
         }
@@ -500,9 +433,9 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
      */
     private function getUserDetails(Mage_Sales_Model_Order $order)
     {
-        $results      = array();
+        $results = array();
         $emailAddress = $order->getData('customer_email');
-        $telephone    = null;
+        $telephone = null;
 
         foreach ($order->getAddressesCollection() as $address) {
             $addressType = $address->getAddressType();
@@ -517,7 +450,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                 }
             }
         }
-        $results['email']     = $emailAddress;
+        $results['email'] = $emailAddress;
         $results['telephone'] = $telephone;
 
         return $results;
@@ -525,7 +458,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
-     * Retrieve order information from the Jet Verzendt server
+     * Retrieve order information from the KeenDelivery server
      *
      * @param $order
      */
@@ -541,7 +474,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                 "Vul uw JetVerzendt autorisatiegegevens correct in", null,
                 'jetverzendt.log'
             );
-            exit;
+            return 'Invalid login';
         }
         $apiStatus = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_LIVE_STATUS, Mage::app()->getStore()
@@ -549,12 +482,12 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
         if ($apiStatus) {
             $ch = curl_init(
-                'https://portal.jetverzendt.nl/api/v2/shipment/'
+                'https://portal.keendelivery.com/api/v2/shipment/'
                 . $order->getJetShipmentId() . '?api_token=' . $token
             );
         } else {
             $ch = curl_init(
-                'http://testportal.jetverzendt.nl/api/v2/shipment/'
+                'http://testportal.keendelivery.com/api/v2/shipment/'
                 . $order->getJetShipmentId() . '?api_token=' . $token
             );
         }
@@ -572,9 +505,9 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
-     * Retrieve labels from the Jet Verzendt server.
+     * Retrieve labels from the KeenDelivery server.
      *
-     * @param $jetIds : array with Jet Verzendt ids
+     * @param $jetIds : array with KeenDelivery ids
      */
     public function retrieveLabelsFromJetVerzendt($jetIds)
     {
@@ -588,7 +521,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                 "Vul uw JetVerzendt autorisatiegegevens correct in", null,
                 'jetverzendt.log'
             );
-            exit;
+            return 'Invalid login';
         }
 
 
@@ -596,17 +529,17 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         $printerMethod = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_PRINTER_METHODS, Mage::app()->getStore()
         );
-        $printerLabel  = Mage::getStoreConfig(
+        $printerLabel = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_PRINTER_LABEL, Mage::app()->getStore()
         );
         if ($printerMethod == 'bat') {
-            $fileName    = 'Verzendlabels Jet Verzendt.bat';
+            $fileName = 'Verzendlabels KeenDelivery.bat';
             $contentType = 'Content-type:application/txt';
         } elseif ($printerMethod == 'zpl') {
-            $fileName    = 'Verzendlabels Jet Verzendt.zpl';
+            $fileName = 'Verzendlabels KeenDelivery.zpl';
             $contentType = 'Content-type:application/txt';
         } else {
-            $fileName    = 'Verzendlabels Jet Verzendt.pdf';
+            $fileName = 'Verzendlabels KeenDelivery.pdf';
             $contentType = 'Content-type:application/pdf';
         }
 
@@ -616,11 +549,11 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         );
         if ($apiStatus) {
             $ch = curl_init(
-                'https://portal.jetverzendt.nl/api/v2/label?api_token=' . $token
+                'https://portal.keendelivery.com/api/v2/label?api_token=' . $token
             );
         } else {
             $ch = curl_init(
-                'http://testportal.jetverzendt.nl/api/v2/label?api_token='
+                'http://testportal.keendelivery.com/api/v2/label?api_token='
                 . $token
             );
         }
@@ -651,14 +584,15 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         $result = json_decode(curl_exec($ch));
 
         if (isset($result->labels)) {
-            header($contentType);
-            header(
-                'Content-Disposition: attachment; filename="' . $fileName . '"'
-            );
-            echo base64_decode($result->labels);
-            exit;
+
+
+            Mage::app()->getResponse()
+                ->clearHeaders()
+                ->setHeader('Content-Type', 'application/pdf')
+                ->setHeader('Content-Disposition', 'attachment' . '; filename=' . basename($fileName))
+                ->setBody(base64_decode($result->labels))->sendResponse();
         } else {
-            die("Ophalen labels is helaas mislukt");
+            return false;
         }
     }
 
@@ -674,12 +608,12 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $order = Mage::getModel('sales/order')->load($orderId);
         if ($order->canShip()) {
-            $shipment   = new Mage_Sales_Model_Order_Shipment_Api();
+            $shipment = new Mage_Sales_Model_Order_Shipment_Api();
             $shipmentId = $shipment->create($order->getIncrementId());
 
 
             if (is_numeric($shipmentId) && $shipmentId > 0) {
-                return true;
+                return $shipmentId;
             } else {
                 return false;
             }
@@ -690,6 +624,10 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
 
+    /**
+     * @param $orderId
+     * @return bool
+     */
     public function changeOrderStatusToComplete($orderId)
     {
         if (Mage::helper('jetverzendt_shipping')->isLastMileStatusComplete()) {
@@ -727,7 +665,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                 "Vul uw JetVerzendt autorisatiegegevens correct in", null,
                 'jetverzendt.log'
             );
-            exit;
+            return 'Invalid login';
         }
         // set post url
         $apiStatus = Mage::getStoreConfig(
@@ -735,17 +673,17 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         );
         if ($apiStatus) {
             $ch = curl_init(
-                'https://portal.jetverzendt.nl/api/v2/parcel-shop/search?api_token='
+                'https://portal.keendelivery.com/api/v2/parcel-shop/search?api_token='
                 . $token
             );
         } else {
             $ch = curl_init(
-                'http://testportal.jetverzendt.nl/api/v2/parcel-shop/search?api_token='
+                'http://testportal.keendelivery.com/api/v2/parcel-shop/search?api_token='
                 . $token
             );
         }
 
-        $products                      = array();
+        $products = array();
         $isLastmileDpdParcelshopEnable = Mage::helper('jetverzendt_shipping')
             ->isLastmileDpdParcelshopEnable();
         $isLastmileDhlParcelshopEnable = Mage::helper('jetverzendt_shipping')
@@ -761,9 +699,8 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         // create data
         $search_data = json_encode(
             array(
-                'number_line_1' => $address['number'],
-                'zip_code' => $address['zip_code'],
-                'country' => $address['country'],
+                'latitude' => $address['latitude'],
+                'longitude' => $address['longitude'],
                 'products' => $products
             )
         );
@@ -805,7 +742,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                 "Vul uw JetVerzendt autorisatiegegevens correct in", null,
                 'jetverzendt.log'
             );
-            exit;
+            return 'Invalid login';
         }
 
         // set post url
@@ -814,22 +751,22 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         );
         if ($apiStatus) {
             $ch = curl_init(
-                'https://portal.jetverzendt.nl/api/v2/delivery-schedule/search?api_token='
+                'https://portal.keendelivery.com/api/v2/delivery-schedule/search?api_token='
                 . $token
             );
         } else {
             $ch = curl_init(
-                'http://testportal.jetverzendt.nl/api/v2/delivery-schedule/search?api_token='
+                'http://testportal.keendelivery.com/api/v2/delivery-schedule/search?api_token='
                 . $token
             );
         }
 
         // create data
         $search_data = json_encode(
-            [
+            array(
                 'zip_code' => $address->getPostcode(),
                 'products' => 'DHL'
-            ]
+            )
         );
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -991,12 +928,12 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     public function isDutchPublicHoliday($date)
     {
         $holidayDays = array();
-        $date        = date('Ymd', strtotime($date));
-        $year        = date('Y', strtotime($date));
+        $date = date('Ymd', strtotime($date));
+        $year = date('Y', strtotime($date));
 
-        $nieuwjaar      = new \DateTime($year . "-01-01");
-        $koningsdag     = new \DateTime($year . "-04-27");
-        $kerstdag       = new \DateTime($year . "-12-25");
+        $nieuwjaar = new \DateTime($year . "-01-01");
+        $koningsdag = new \DateTime($year . "-04-27");
+        $kerstdag = new \DateTime($year . "-12-25");
         $tweedeKerstdag = new \DateTime($year . "-12-26");
 
         $paasdag = new \DateTime();
@@ -1045,6 +982,75 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
 
+    /**
+     * @return array|mixed|string
+     */
+    public function getShippingMethodsFromJetVerzendt()
+    {
+
+        $jetShippingMethods = Mage::getSingleton('core/session')->getJetShippingMethods();
+        if (!isset($jetShippingMethods) || !is_array($jetShippingMethods)) {
+            $token = Mage::getStoreConfig(
+                self::STORE_CONFIG_PATH_TOKEN, Mage::app()->getStore()
+            );
+            if (!$token) {
+                Mage::log(
+                    "Vul uw JetVerzendt autorisatiegegevens correct in", null,
+                    'jetverzendt.log'
+                );
+                return 'Invalid login';
+            }
+
+
+            // set post url
+            $apiStatus = Mage::getStoreConfig(
+                self::STORE_CONFIG_PATH_LIVE_STATUS, Mage::app()->getStore()
+            );
+            if ($apiStatus) {
+                $ch = curl_init(
+                    'https://portal.keendelivery.com/api/v2/shipping_methods?api_token=' . $token . '&source=magento'
+                );
+            } else {
+                $ch = curl_init(
+                    'http://testportal.keendelivery.com/api/v2/shipping_methods?api_token=' . $token . '&source=magento'
+                );
+            }
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt(
+                $ch, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/json',
+                    'Accept: application/json'
+                )
+            );
+
+            $result = curl_exec($ch);
+            $jetShippingMethods = json_decode($result);
+            if (is_object($jetShippingMethods) && isset($jetShippingMethods->shipping_methods)) {
+
+                $jetShippingMethods = (array)$jetShippingMethods->shipping_methods;
+                Mage::getSingleton('core/session')->setJetShippingMethods($jetShippingMethods);
+                $jetShippingMethods = Mage::getSingleton('core/session')->getJetShippingMethods();
+
+            }
+
+        }
+
+        return $jetShippingMethods;
+    }
+
+
+    /**
+     * @return string
+     */
+    function getShippingMethodsInJson()
+    {
+        return json_encode($this->getShippingMethodsFromJetVerzendt());
+    }
 }
 
 

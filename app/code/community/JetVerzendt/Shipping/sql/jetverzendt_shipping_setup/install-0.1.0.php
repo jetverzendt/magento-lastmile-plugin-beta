@@ -28,8 +28,6 @@ CREATE TABLE IF NOT EXISTS {$this->getTable('jetverzendt_shipping/package')} (
   `mage_order_id` int(11) NOT NULL COMMENT 'magento order entity_id',
   `track_trace_key` varchar(100) NOT NULL,
   `track_trace_url` text NOT NULL,
-  `shipment_method_name` varchar(255) NOT NULL,
-  `shipment_method_class` varchar(255) NOT NULL,
   PRIMARY KEY (`package_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='jetverzendt_shipping_package';
 
