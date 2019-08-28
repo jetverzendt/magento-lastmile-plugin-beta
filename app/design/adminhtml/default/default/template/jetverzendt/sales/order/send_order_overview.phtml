@@ -25,169 +25,194 @@ if (count($orders) == 0) :
 
     <div>
         <div class="grid">
-            <table class="data" cellspacing="0">
-                <thead>
-                <tr class="headings">
-                    <th class=" last"><span class="sort-title">Order #</span>
-                    </th>
-                    <th class=" last"><span class="sort-title">Naam</span>
-                    </th>
-                    <th class=" last"><span class="sort-title">Adres</span>
-                    </th>
-                    <th class=" last"><span class="sort-title">Plaats</span>
-                    </th>
-                    <th class=" last"><span class="sort-title">Land</span>
-                    </th>
-                    <th class=" last"><span class="sort-title">Aantal items</span>
-                    </th>
-                    <th class=" last"><span class="sort-title">Lastmile</span>
-                    </th>
-                    <th class=" last" style="width: 500px"><span class="sort-title">Verzendspecificaties</span>
-                    </th>
-                    <th class="" style="width: 300px"><span class="sort-title">KeenDelivery status</span>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php
-                if ($orders) :
-                    $i = 0;
-                    foreach ($orders as $order) :
-                        ?>
-                        <tr class="<?php echo ($i % 2) ? 'even' : 'odd' ?> " title=""
-                            id="keen_order_<?php echo $this->escapeHtml($order->getEntityId()); ?>">
-                            <td>
-                                <?php echo $this->escapeHtml($order->getIncrementId()); ?>
-                                <input type="hidden" class="order_ids" id="order_id_<?php echo $i ?>"
-                                       value="<?php echo $order->getEntityId(); ?>"/>
-                                <input type="hidden" id="order_increment_<?php echo $order->getEntityId(); ?>"
-                                       value="<?php echo $order->getIncrementId(); ?>"/>
-                                <input type="hidden" id="order_send_status_<?php echo $order->getEntityId(); ?>"
-                                       value="0"/>
 
-                            </td>
-                            <td>
-                                <?php echo $this->escapeHtml(
-                                    $order->getShippingAddress()->getFirstname() . ' ' . $order->getShippingAddress()->getMiddlename()
-                                    . ' '
-                                    . $order->getShippingAddress()->getLastname()
-                                ); ?>
+            <form method="post" action="<?php echo Mage::getModel('adminhtml/url')->getUrl(
+                'adminhtml/jetverzendt/printlabels'); ?>">
+                <input name="form_key" type="hidden" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
 
-                            </td>
-                            <td>
-                                <?php echo $this->escapeHtml($order->getShippingAddress()->getData('street')); ?>
-                            </td>
-                            <td>
-                                <?php echo $this->escapeHtml($order->getShippingAddress()->getCity()); ?>
-                            </td>
-                            <td>
-                                <?php echo $this->escapeHtml($order->getShippingAddress()->getCountry()); ?>
-                            </td>
-                            <td>
-                                <div class="keen_tooltip">
-                                    <?php echo $this->escapeHtml($order->getTotalItemCount()); ?>
-                                    <span class="keen_tooltiptext"><?php $items = $order->getAllVisibleItems();
-                                        foreach ($items as $item):
-                                            echo ($item->getQtyOrdered() * 1) . ' x ' . $item->getName() . '<br/>';
-                                        endforeach;
-                                        ?></span>
-                                </div>
-                            </td>
-                            <td>
-                                <?php
-                                $jetLastmileComment = '';
-                                $jetShipmentSetting = '';
-                                if ($order->getJetLastMile()) {
-                                    $jetDefaultOrder = 0;
+                <table class="data" cellspacing="0">
+                    <thead>
+                    <tr class="headings">
+                        <th class=" last"><span class="sort-title">Order #</span>
+                        </th>
+                        <th class=" last"><span class="sort-title">Naam</span>
+                        </th>
+                        <th class=" last"><span class="sort-title">Adres</span>
+                        </th>
+                        <th class=" last"><span class="sort-title">Plaats</span>
+                        </th>
+                        <th class=" last"><span class="sort-title">Land</span>
+                        </th>
+                        <th class=" last"><span class="sort-title">Aantal items</span>
+                        </th>
+                        <th class=" last"><span class="sort-title">Lastmile</span>
+                        </th>
+                        <th class=" last" style="width: 500px"><span class="sort-title">Verzendspecificaties</span>
+                        </th>
+                        <th class="" style="width: 300px"><span class="sort-title">KeenDelivery status</span>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    if ($orders) :
+                        $i = 0;
+                        foreach ($orders as $order) :
+                            ?>
+                            <tr class="<?php echo ($i % 2) ? 'even' : 'odd' ?> " title=""
+                                id="keen_order_<?php echo $this->escapeHtml($order->getEntityId()); ?>">
+                                <td>
+                                    <?php echo $this->escapeHtml($order->getIncrementId()); ?>
+                                    <input name="order_ids[]" type="hidden" class="order_ids" id="order_id_<?php echo $i ?>"
+                                           value="<?php echo $order->getEntityId(); ?>"/>
+                                    <input type="hidden" id="order_increment_<?php echo $order->getEntityId(); ?>"
+                                           value="<?php echo $order->getIncrementId(); ?>"/>
+                                    <input type="hidden" class="successfull_orders"
+                                           id="order_send_status_<?php echo $order->getEntityId(); ?>"
+                                           value="0"/>
 
-                                    $lastMileData = unserialize($order->getJetLastMile());
+                                </td>
+                                <td>
+                                    <?php echo $this->escapeHtml(
+                                        $order->getShippingAddress()->getFirstname() . ' ' . $order->getShippingAddress()->getMiddlename()
+                                        . ' '
+                                        . $order->getShippingAddress()->getLastname()
+                                    ); ?>
 
-                                    if (isset($lastMileData['type'])
-                                        && $lastMileData['type'] == 'dhl_deliverdate'
-                                        && isset($lastMileData['lastmile_service'])
-                                        && isset($lastMileData['lastmile_deliverdate'])
-                                        && isset($lastMileData['lastmile_deliverperiod'])
-                                        && isset($lastMileData['lastmile_deliverevening'])
-                                    ) {
-                                        $jetShipmentSetting = 'product=' . $lastMileData['lastmile_service'] . '&service=DHL_FOR_YOU' . (($lastMileData['lastmile_deliverevening'] == 1) ? '&evening=1' : '');
-                                        $jetLastmileComment = '<strong>Tijdsvaklevering op: ' . $this->escapeHtml($lastMileData['lastmile_deliverdate']) . '</strong>';
-                                        $jetLastmileComment .= '<br/>' . (($lastMileData['lastmile_deliverevening'] == 1) ? 'Avondlevering.' : '');
+                                </td>
+                                <td>
+                                    <?php echo $this->escapeHtml($order->getShippingAddress()->getData('street')); ?>
+                                </td>
+                                <td>
+                                    <?php echo $this->escapeHtml($order->getShippingAddress()->getCity()); ?>
+                                </td>
+                                <td>
+                                    <?php echo $this->escapeHtml($order->getShippingAddress()->getCountry()); ?>
+                                </td>
+                                <td>
+                                    <div class="keen_tooltip">
+                                        <?php echo $this->escapeHtml($order->getTotalItemCount()); ?>
+                                        <span class="keen_tooltiptext"><?php $items = $order->getAllVisibleItems();
+                                            foreach ($items as $item):
+                                                echo ($item->getQtyOrdered() * 1) . ' x ' . $item->getName() . '<br/>';
+                                            endforeach;
+                                            ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <?php
+                                    $jetLastmileComment = '';
+                                    $jetShipmentSetting = '';
+                                    if ($order->getJetLastMile()) {
+                                        $jetDefaultOrder = 0;
 
-                                    }
+                                        $lastMileData = unserialize($order->getJetLastMile());
 
-                                    if (isset($lastMileData['type'])
-                                        && $lastMileData['type'] == 'dpd_saterday'
-                                    ) {
-                                        $jetLastmileComment = '<strong>DPD zaterdaglevering op: ' . $this->escapeHtml(date('d-m-Y', strtotime($lastMileData['lastmile_deliverdate']))) . '</strong>';
-                                        $jetShipmentSetting = 'product=DPD&service=CL&saturday_delivery=1';
-                                    }
-
-                                    if (isset($lastMileData['type'])
-                                        && $lastMileData['type'] == 'fadello'
-                                    ) {
-                                        $jetLastmileComment = '<strong>Same Day Delivery</strong>';
-                                        $jetShipmentSetting = 'product=Fadello&service=DEFAULT';
-                                    }
-
-
-                                    if (isset($lastMileData['type'])
-                                        && $lastMileData['type'] == 'nextdaypremium'
-                                    ) {
-                                        $jetLastmileComment = '<strong>Next Day Premium</strong>';
-                                        $jetShipmentSetting = 'product=NextDayPremium&service=DEFAULT';
-                                    }
-
-
-                                    if (isset($lastMileData['type'])
-                                        && $lastMileData['type'] == 'parcelshop'
-                                        && isset($lastMileData['lastmile_service'])
-                                        && isset($lastMileData['lastmile_parcelshop_id'])
-                                    ) {
-                                        if ($lastMileData['lastmile_service'] == 'DPD') {
-                                            $jetShipmentSetting = 'product=DPD&service=PARCELSHOP&parcel_shop_id=' . $lastMileData['lastmile_parcelshop_id'];
-                                        } else {
-                                            $jetShipmentSetting = 'product=' . $lastMileData['lastmile_service'] . '&service=PARCEL_SHOP&parcel_shop_id=' . $lastMileData['lastmile_parcelshop_id'];
+                                        if (isset($lastMileData['type'])
+                                            && $lastMileData['type'] == 'dhl_deliverdate'
+                                            && isset($lastMileData['lastmile_service'])
+                                            && isset($lastMileData['lastmile_deliverdate'])
+                                            && isset($lastMileData['lastmile_deliverperiod'])
+                                            && isset($lastMileData['lastmile_deliverevening'])
+                                        ) {
+                                            $jetShipmentSetting = 'product=' . $lastMileData['lastmile_service'] . '&service=DHL_FOR_YOU' . (($lastMileData['lastmile_deliverevening'] == 1) ? '&evening=1' : '');
+                                            $jetLastmileComment = '<strong>Tijdsvaklevering op: ' . $this->escapeHtml($lastMileData['lastmile_deliverdate']) . '</strong>';
+                                            $jetLastmileComment .= '<br/>' . (($lastMileData['lastmile_deliverevening'] == 1) ? 'Avondlevering.' : '');
 
                                         }
-                                        $jetLastmileComment = '<strong>Parcelshop: ' . $this->escapeHtml($lastMileData['lastmile_parcelshop_id']) . '</strong>';
-                                        $jetLastmileComment .= '<br/>' . $this->escapeHtml($lastMileData['lastmile_parcelshop_description']);
+
+                                        if (isset($lastMileData['type'])
+                                            && $lastMileData['type'] == 'dpd_saterday'
+                                        ) {
+                                            $jetLastmileComment = '<strong>DPD zaterdaglevering op: ' . $this->escapeHtml(date('d-m-Y', strtotime($lastMileData['lastmile_deliverdate']))) . '</strong>';
+                                            $jetShipmentSetting = 'product=DPD&service=CL&saturday_delivery=1';
+                                        }
+
+                                        if (isset($lastMileData['type'])
+                                            && $lastMileData['type'] == 'fadello'
+                                        ) {
+                                            $jetLastmileComment = '<strong>Same Day Delivery</strong>';
+                                            $jetShipmentSetting = 'product=Fadello&service=DEFAULT';
+                                        }
+
+
+                                        if (isset($lastMileData['type'])
+                                            && $lastMileData['type'] == 'nextdaypremium'
+                                        ) {
+                                            $jetLastmileComment = '<strong>Next Day Premium</strong>';
+                                            $jetShipmentSetting = 'product=NextDayPremium&service=DEFAULT';
+                                        }
+
+
+                                        if (isset($lastMileData['type'])
+                                            && $lastMileData['type'] == 'parcelshop'
+                                            && isset($lastMileData['lastmile_service'])
+                                            && isset($lastMileData['lastmile_parcelshop_id'])
+                                        ) {
+                                            if ($lastMileData['lastmile_service'] == 'DPD') {
+                                                $jetShipmentSetting = 'product=DPD&service=PARCELSHOP&parcel_shop_id=' . $lastMileData['lastmile_parcelshop_id'];
+                                            } else {
+                                                $jetShipmentSetting = 'product=' . $lastMileData['lastmile_service'] . '&service=PARCEL_SHOP&parcel_shop_id=' . $lastMileData['lastmile_parcelshop_id'];
+
+                                            }
+                                            $jetLastmileComment = '<strong>Parcelshop: ' . $this->escapeHtml($lastMileData['lastmile_parcelshop_id']) . '</strong>';
+                                            $jetLastmileComment .= '<br/>' . $this->escapeHtml($lastMileData['lastmile_parcelshop_description']);
+                                        }
+
+                                    } else {
+
+                                        $jetShipmentSetting = isset($defaultShipmentSetting) ? $this->escapeHtml($defaultShipmentSetting) : '';
+                                        $jetDefaultOrder = 1;
+                                        $jetLastmileComment = '';
+
+
                                     }
 
-                                } else {
+                                    echo $jetLastmileComment;
 
-                                    $jetShipmentSetting = isset($defaultShipmentSetting) ? $this->escapeHtml($defaultShipmentSetting) : '';
-                                    $jetDefaultOrder = 1;
-                                    $jetLastmileComment = '';
+                                    ?>
+                                </td>
+                                <td class="last" id="keen_deliver_<?php echo $order->getEntityId(); ?>">
+                                    <input type="hidden"
+                                           id="keen_default_order_<?php echo $order->getEntityId(); ?>"
+                                           value="<?php echo $this->escapeHtml($jetDefaultOrder); ?>"/>
+
+                                    <input type="hidden"
+                                           id="keen_shipment_setting_<?php echo $order->getEntityId(); ?>"
+                                           value="<?php echo $this->escapeHtml($jetShipmentSetting); ?>"/>
+
+                                    <span id="keen_order_text_<?php echo $order->getEntityId(); ?>"></span>
+                                    <a href="javascript:void(0);"
+                                       onclick="jetSetupOrderSetting(<?php echo $order->getEntityId(); ?>); $('keen_lightbox').show(); return false;">Bekijk/wijzig</a>
+                                </td>
+                                <td class="keen_order_status"
+                                    id="keen_order_status_<?php echo $order->getEntityId(); ?>"></td>
+                            </tr>
+                            <?php
+                            $i++;
+                        endforeach;
+                    endif; ?>
+                    </tbody>
+                </table>
+
+                <div class="keen_alert keen_lightbox" id="keen_print_labels" style="display: none">
+                    <div class="keen_lightbox_close" onclick="jetCloseLightbox();"><span>x</span></div>
+                    <div>
+                        <h3>De orders zijn verstuurd!</h3>
+
+                        <p>&nbsp;</p>
 
 
-                                }
+                        <button title="Print labels" type="submit"
+                                class=""><span>Print labels</span>
+                        </button>
 
-                                echo $jetLastmileComment;
-
-                                ?>
-                            </td>
-                            <td class="last" id="keen_deliver_<?php echo $order->getEntityId(); ?>">
-                                <input type="hidden"
-                                       id="keen_default_order_<?php echo $order->getEntityId(); ?>"
-                                       value="<?php echo $this->escapeHtml($jetDefaultOrder); ?>"/>
-
-                                <input type="hidden"
-                                       id="keen_shipment_setting_<?php echo $order->getEntityId(); ?>"
-                                       value="<?php echo $this->escapeHtml($jetShipmentSetting); ?>"/>
-
-                                <span id="keen_order_text_<?php echo $order->getEntityId(); ?>"></span>
-                                <a href="javascript:void(0);"
-                                   onclick="jetSetupOrderSetting(<?php echo $order->getEntityId(); ?>); $('keen_lightbox').show(); return false;">Bekijk/wijzig</a>
-                            </td>
-                            <td class="keen_order_status"
-                                id="keen_order_status_<?php echo $order->getEntityId(); ?>"></td>
-                        </tr>
-                        <?php
-                        $i++;
-                    endforeach;
-                endif; ?>
-                </tbody>
-            </table>
+                        <br/>
+                        <br/>
+                        <a href="<?php echo Mage::helper('adminhtml')->getUrl('*/sales_shipment') ?>">Of terug naar overzicht</a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -207,6 +232,8 @@ if (count($orders) == 0) :
 
         </div>
     </div>
+
+
     <script type="text/javascript">
         var keen_shippable_orders = new Array;
         var keen_send_status = 0;
@@ -700,7 +727,6 @@ if (count($orders) == 0) :
             var i = 0;
 
             if (jetCheckForm()) {
-                //saveDefaultShipmentForm();
 
                 $$(".order_ids").each(
                     function (item) {
@@ -755,7 +781,7 @@ if (count($orders) == 0) :
                                 alert('Het verzenden is afgerond. Er zijn ' + keen_errors + ' orders mislukt.');
                             }
                         } else {
-                            alert('Verzenden is succesvol afgerond.');
+                            $('keen_print_labels').show();
                         }
 
                         $('keen_button_send_orders').removeClassName('disabled');

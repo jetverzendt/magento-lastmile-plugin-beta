@@ -22,20 +22,24 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     const STORE_CONFIG_PATH_LASTMILE_DELIVERY_DHL_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_delivery_dhl_enable';
     const STORE_CONFIG_PATH_LASTMILE_DELIVERY_DHL_TIME = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_delivery_dhl_time';
     const STORE_CONFIG_PATH_LASTMILE_PRICE_DHL_EVENING = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_price_dhl_evening';
+    const STORE_CONFIG_PATH_LASTMILE_BUTTON_DHL_EVENING = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_button_dhl_evening';
 
     // DPD Saterday Delivery
     const STORE_CONFIG_PATH_LASTMILE_SATERDAY_DPD_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_saterday_dpd_enable';
     const STORE_CONFIG_PATH_LASTMILE_SATERDAY_DPD_TIME = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_saterday_dpd_time';
     const STORE_CONFIG_PATH_LASTMILE_SATERDAY_DPD_PRICE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_saterday_dpd_price';
+    const STORE_CONFIG_PATH_LASTMILE_SATERDAY_DPD_BUTTON = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_saterday_dpd_button';
 
     // Fadello
     const STORE_CONFIG_PATH_LASTMILE_FADELLO_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_fadello_enable';
     const STORE_CONFIG_PATH_LASTMILE_FADELLO_TIME = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_fadello_time';
     const STORE_CONFIG_PATH_LASTMILE_FADELLO_PRICE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_fadello_price';
+    const STORE_CONFIG_PATH_LASTMILE_FADELLO_BUTTON = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_fadello_button';
 
     // Fadello
     const STORE_CONFIG_PATH_LASTMILE_NEXTDAYPREMIUM_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_nextdaypremium_enable';
     const STORE_CONFIG_PATH_LASTMILE_NEXTDAYPREMIUM_PRICE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_nextdaypremium_price';
+    const STORE_CONFIG_PATH_LASTMILE_NEXTDAYPREMIUM_BUTTON = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_nextdaypremium_button';
 
     // DHL Parcelshop
     const STORE_CONFIG_PATH_LASTMILE_DHL_PARCELSHOP_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_dhl_parcelshop_enable';
@@ -45,12 +49,11 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     const STORE_CONFIG_PATH_LASTMILE_DPD_PARCELSHOP_ENABLE = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_dpd_parcelshop_enable';
     const STORE_CONFIG_PATH_LASTMILE_PRICE_DPD_PARCELSHOP = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_dpd_parcelshop_price';
 
+    const STORE_CONFIG_PATH_LASTMILE_PARCELSHOP_BUTTON = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_parcelshop_button';
 
     const STORE_CONFIG_PATH_LASTMILE_GOOGLE_MAPS_KEY = 'jetverzendt/jetverzendt_lastmile/jetverzendt_lastmile_google_maps_key';
 
-
     /**
-     *
      * Check if an order in the KeenDelivery config setting default is assigned to KeenDelivery
      *
      * @param $orderId
@@ -75,9 +78,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return false;
-
     }
-
 
     /**
      * Get the default KeenDelivery shipment method (as example: returns: "flatrate")
@@ -92,7 +93,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     *
      * Check if an order is an order assigned to Jet
      *
      * @param $orderId
@@ -101,7 +101,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isJetVerzendtOrder($orderId)
     {
-
         $collection = Mage::getModel('jetverzendt_shipping/shipment')
             ->getCollection();
         $collection->addFieldToFilter('mage_order_id', $orderId);
@@ -137,7 +136,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         );
     }
 
-
     /**
      * @return mixed
      */
@@ -149,7 +147,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         );
     }
 
-
     /**
      * @return mixed
      */
@@ -160,7 +157,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::app()->getStore()
         );
     }
-
 
     /**
      * @return mixed
@@ -195,7 +191,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         );
     }
 
-
     /**
      * @return mixed
      */
@@ -206,7 +201,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::app()->getStore()
         );
     }
-
 
     /**
      * Check with a date if the DHL deliver box can be shown
@@ -260,7 +254,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
     }
 
-
     /**
      * @return mixed|string
      */
@@ -291,7 +284,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         return $deliveryTime;
     }
 
-
     /**
      * @param $orderId
      *
@@ -304,7 +296,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         );
 
     }
-
 
     /**
      * Try to split 1 street to 2 streets
@@ -332,7 +323,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $street;
     }
-
 
     /**
      * Send an order to the KeenDelivery server
@@ -412,6 +402,8 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($shipmentData));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt(
             $ch, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
@@ -421,7 +413,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         );
 
         return json_decode(curl_exec($ch));
-
     }
 
     /**
@@ -456,19 +447,19 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         return $results;
     }
 
-
     /**
      * Retrieve order information from the KeenDelivery server
      *
      * @param $order
+     * @return mixed|string
      */
     public function retrieveOrderFromJetVerzendt($order)
     {
-
         // get jet verzendt authorisation data
         $token = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_TOKEN, Mage::app()->getStore()
         );
+
         if (!$token) {
             Mage::log(
                 "Vul uw JetVerzendt autorisatiegegevens correct in", null,
@@ -476,6 +467,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             );
             return 'Invalid login';
         }
+
         $apiStatus = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_LIVE_STATUS, Mage::app()->getStore()
         );
@@ -491,8 +483,11 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                 . $order->getJetShipmentId() . '?api_token=' . $token
             );
         }
+
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt(
             $ch, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
@@ -503,15 +498,14 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         return json_decode(curl_exec($ch));
     }
 
-
     /**
      * Retrieve labels from the KeenDelivery server.
      *
      * @param $jetIds : array with KeenDelivery ids
+     * @return bool
      */
     public function retrieveLabelsFromJetVerzendt($jetIds)
     {
-
         // get user settings
         $token = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_TOKEN, Mage::app()->getStore()
@@ -524,7 +518,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             return 'Invalid login';
         }
 
-
         // get printer settings
         $printerMethod = Mage::getStoreConfig(
             self::STORE_CONFIG_PATH_PRINTER_METHODS, Mage::app()->getStore()
@@ -534,9 +527,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         );
         if ($printerMethod == 'bat') {
             $fileName = 'Verzendlabels KeenDelivery.bat';
-            $contentType = 'Content-type:application/txt';
-        } elseif ($printerMethod == 'zpl') {
-            $fileName = 'Verzendlabels KeenDelivery.zpl';
             $contentType = 'Content-type:application/txt';
         } else {
             $fileName = 'Verzendlabels KeenDelivery.pdf';
@@ -548,24 +538,15 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             self::STORE_CONFIG_PATH_LIVE_STATUS, Mage::app()->getStore()
         );
         if ($apiStatus) {
-            $ch = curl_init(
-                'https://portal.keendelivery.com/api/v2/label?api_token=' . $token
-            );
+            $ch = curl_init('https://portal.keendelivery.com/api/v2/label?api_token=' . $token);
         } else {
-            $ch = curl_init(
-                'http://testportal.keendelivery.com/api/v2/label?api_token='
-                . $token
-            );
+            $ch = curl_init('http://testportal.keendelivery.com/api/v2/label?api_token=' . $token);
         }
-
 
         $labelData = json_encode(
             array(
                 'shipments' => $jetIds,
-                'label' => array(
-                    'type' => strtoupper($printerMethod),
-                    'size' => strtoupper($printerLabel)
-                )
+                'type' => strtoupper($printerMethod),
             )
         );
 
@@ -573,6 +554,8 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $labelData);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt(
             $ch, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
@@ -584,18 +567,16 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         $result = json_decode(curl_exec($ch));
 
         if (isset($result->labels)) {
-
-
             Mage::app()->getResponse()
                 ->clearHeaders()
                 ->setHeader('Content-Type', 'application/pdf')
                 ->setHeader('Content-Disposition', 'attachment' . '; filename=' . basename($fileName))
-                ->setBody(base64_decode($result->labels))->sendResponse();
+                ->setBody(base64_decode($result->labels))
+                ->sendResponse();
         } else {
             return false;
         }
     }
-
 
     /**
      * Create an shipment from an order
@@ -623,7 +604,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
     }
 
-
     /**
      * @param $orderId
      * @return bool
@@ -645,7 +625,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
     }
-
 
     /**
      * Get parcel shop data form the portal
@@ -695,7 +674,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             $products[] = 'DPD';
         }
 
-
         // create data
         $search_data = json_encode(
             array(
@@ -705,11 +683,12 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
             )
         );
 
-
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $search_data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt(
             $ch, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
@@ -717,21 +696,18 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                 'Content-Length: ' . strlen($search_data)
             )
         );
-
-        return json_decode(curl_exec($ch));
-
-
+        $result = curl_exec($ch);
+        return json_decode($result);
     }
-
 
     /**
      * Get deliver dates
      *
-     * @param $address
+     * @param $zipcode
      *
      * @return mixed
      */
-    public function getDeliverDates($address)
+    public function getDeliverDates($zipcode)
     {
         // get user settings
         $token = Mage::getStoreConfig(
@@ -764,7 +740,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         // create data
         $search_data = json_encode(
             array(
-                'zip_code' => $address->getPostcode(),
+                'zip_code' => $zipcode,
                 'products' => 'DHL'
             )
         );
@@ -773,6 +749,8 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $search_data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt(
             $ch, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
@@ -790,9 +768,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         } else {
             return $result;
         }
-
     }
-
 
     /**
      * @return int|mixed
@@ -809,7 +785,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
         return 0;
     }
-
 
     /**
      * @return int|mixed
@@ -892,7 +867,62 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @return int|mixed
+     * @return mixed
+     */
+    public function getLastmileButtonDhlEvening()
+    {
+        return Mage::getStoreConfig(
+            self::STORE_CONFIG_PATH_LASTMILE_BUTTON_DHL_EVENING,
+            Mage::app()->getStore()
+        );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastmileSaterdayDpdButton()
+    {
+        return Mage::getStoreConfig(
+            self::STORE_CONFIG_PATH_LASTMILE_SATERDAY_DPD_BUTTON,
+            Mage::app()->getStore()
+        );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastmileFadelloButton()
+    {
+        return Mage::getStoreConfig(
+            self::STORE_CONFIG_PATH_LASTMILE_FADELLO_BUTTON,
+            Mage::app()->getStore()
+        );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastmileNextDayPremiumButton()
+    {
+        return Mage::getStoreConfig(
+            self::STORE_CONFIG_PATH_LASTMILE_NEXTDAYPREMIUM_BUTTON,
+            Mage::app()->getStore()
+        );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastmileParcelshopButton()
+    {
+        return Mage::getStoreConfig(
+            self::STORE_CONFIG_PATH_LASTMILE_PARCELSHOP_BUTTON,
+            Mage::app()->getStore()
+        );
+    }
+
+    /**
+     * @return mixed
      */
     public function getLastmileGoogleMapsKey()
     {
@@ -916,7 +946,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
 
         return true;
     }
-
 
     /**
      * Check if a date is a dutch holiday day
@@ -965,9 +994,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return false;
-
     }
-
 
     /**
      * Get country from current quote shipping address
@@ -978,9 +1005,7 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return Mage::getModel('checkout/session')->getQuote()
             ->getShippingAddress()->getCountry();
-
     }
-
 
     /**
      * @return array|mixed|string
@@ -1000,7 +1025,6 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                 );
                 return 'Invalid login';
             }
-
 
             // set post url
             $apiStatus = Mage::getStoreConfig(
@@ -1035,14 +1059,10 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
                 $jetShippingMethods = (array)$jetShippingMethods->shipping_methods;
                 Mage::getSingleton('core/session')->setJetShippingMethods($jetShippingMethods);
                 $jetShippingMethods = Mage::getSingleton('core/session')->getJetShippingMethods();
-
             }
-
         }
-
         return $jetShippingMethods;
     }
-
 
     /**
      * @return string
@@ -1051,6 +1071,62 @@ class JetVerzendt_Shipping_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return json_encode($this->getShippingMethodsFromJetVerzendt());
     }
+
+    /**
+     * @param Mage_Sales_Model_Order $order
+     * @return string
+     */
+    function getOrderLastMileDescription(Mage_Sales_Model_Order $order) {
+        if ($order->getJetLastMile() != '') {
+            $lastMileData = @unserialize($order->getJetLastMile());
+
+            $jetLastmileComment = '';
+
+            if (isset($lastMileData['type'])
+                && $lastMileData['type'] == 'dhl_deliverdate'
+                && isset($lastMileData['lastmile_service'])
+                && isset($lastMileData['lastmile_deliverdate'])
+                && isset($lastMileData['lastmile_deliverperiod'])
+                && isset($lastMileData['lastmile_deliverevening'])
+            ) {
+                $jetLastmileComment = '<strong>Tijdsvaklevering op: ' . $this->escapeHtml($lastMileData['lastmile_deliverdate']) . '</strong>';
+                $jetLastmileComment .= '<br/>' . (($lastMileData['lastmile_deliverevening'] == 1) ? 'Avondlevering.' : '');
+
+            }
+
+            if (isset($lastMileData['type'])
+                && $lastMileData['type'] == 'dpd_saterday'
+            ) {
+                $jetLastmileComment = '<strong>DPD zaterdaglevering op: ' . $this->escapeHtml(date('d-m-Y', strtotime($lastMileData['lastmile_deliverdate']))) . '</strong>';
+            }
+
+            if (isset($lastMileData['type'])
+                && $lastMileData['type'] == 'fadello'
+            ) {
+                $jetLastmileComment = '<strong>Same Day Delivery</strong>';
+            }
+
+
+            if (isset($lastMileData['type'])
+                && $lastMileData['type'] == 'nextdaypremium'
+            ) {
+                $jetLastmileComment = '<strong>Next Day Premium</strong>';
+            }
+
+
+            if (isset($lastMileData['type'])
+                && $lastMileData['type'] == 'parcelshop'
+                && isset($lastMileData['lastmile_service'])
+                && isset($lastMileData['lastmile_parcelshop_id'])
+            ) {
+
+                $jetLastmileComment = '<strong>Parcelshop: ' . $this->escapeHtml($lastMileData['lastmile_parcelshop_id']) . '</strong>';
+                $jetLastmileComment .= '<br/>' . $this->escapeHtml($lastMileData['lastmile_parcelshop_description']);
+            }
+
+            return $jetLastmileComment;
+        } else {
+            return '';
+        }
+    }
 }
-
-

@@ -44,8 +44,12 @@ class JetVerzendt_Shipping_DeliverdatesController extends Mage_Core_Controller_F
         // check if valid ajax request
         if ($this->getRequest()->isXmlHttpRequest()) {
             $address = Mage::getModel('checkout/session')->getQuote()->getShippingAddress();
-            if (isset($address)) {
-                $parcelshopAddress       = Mage::helper('jetverzendt_shipping')->getDeliverDates($address);
+            $zipcode = $address->getPostcode();
+            if (!isset($zipcode) || empty($zipcode)) {
+                $zipcode = $this->getRequest()->getParam('zipcode');
+            }
+            if (isset($zipcode)) {
+                $parcelshopAddress       = Mage::helper('jetverzendt_shipping')->getDeliverDates($zipcode);
                 $lastmilePriceDhlEvening = Mage::helper('jetverzendt_shipping')->getLastmilePriceDhlEvening();
                 $block                   = $this->getLayout()->createBlock(
                     'Mage_Core_Block_Template',

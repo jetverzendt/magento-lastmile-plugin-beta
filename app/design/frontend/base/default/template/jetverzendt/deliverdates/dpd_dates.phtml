@@ -1,6 +1,6 @@
 <?php
 $lastmilePriceDpdSaterday = $this->getLastmilePriceDpdSaterday();
-$lastmileSaterdayDpdTime  = $this->getLastmileSaterdayDpdTime();
+$lastmileSaterdayDpdTime = $this->getLastmileSaterdayDpdTime();
 
 $arrSaterdays = array();
 for ($x = 0; $x <= 4; $x++
@@ -21,46 +21,36 @@ for ($x = 0; $x <= 4; $x++
 
 
 echo '<h1>Kies een zaterdag uit:</h1>';
-
-echo '<table width=\'92%\' class=\'deliver_dates\'>';
-echo '<tbody>';
-if ($arrSaterdays) {
-    foreach ($arrSaterdays as $key => $val) {
-        if (Mage::helper('jetverzendt_shipping')->isDutchPublicHoliday($key)) {
-            continue;
-        }
-
-        echo '<tr>';
-        echo '  <td>Zaterdag ' . $val;
-
-
-        echo ' <a onclick="$(\'jet_last_mile_choice\').show(); $(\'lastmile_deliverdate\').setValue(\'' . $this->escapeHtml($key)
-            . '\');  $(\'lastmile_service\').setValue(\'DPD\'); $(\'lastmile_type\').setValue(\'dpd_saterday\');   $(\'jet_name_lastmile\').update(\'Zaterdaglevering: ' . $this->escapeHtml($val)
-            . '\'); $(\'lastmile_lightbox\').hide(); setService();  $(\'clear_last_mile\').show(); return false; ">';
-        echo 'Selecteer';
-        echo '</a>';
-
-        echo '<span class="jet_special_price"> + ';
-        echo Mage::helper('core')->currency($lastmilePriceDpdSaterday, true, false);
-        echo '</span>';
-
-        echo '</td>';
-
-        echo '</tr>';
-
-    }
-
-
-} else {
-
-    echo '<tr><td colspan="5">Helaas... er kunnen geen data getoond worden. </td></tr>';
-}
-
-echo '<tbody>';
-
-echo '</table>';
-
 ?>
+
+<div class="element-list">
+    <?php
+    if ($arrSaterdays) :
+        foreach ($arrSaterdays as $key => $val) :
+            if (Mage::helper('jetverzendt_shipping')->isDutchPublicHoliday($key)) {
+                continue;
+            }
+            ?>
+            <div class="row">
+                <div class="col-100">
+                    Zaterdag <?php echo $this->escapeHtml($val); ?>
+
+                    <a href="javascript:void(0);"  onclick="$('jet_last_mile_choice').show(); $('lastmile_deliverdate').setValue('<?php echo $this->escapeHtml($key) ?>');  $('lastmile_service').setValue('DPD'); $('lastmile_type').setValue('dpd_saterday');   $('jet_name_lastmile').update('Zaterdaglevering: <?php echo $this->escapeHtml($val) ?>'); $('lastmile_lightbox').hide(); setService();  $('clear_last_mile').show(); return false; ">Selecteer</a>
+
+                    <span class="jet_special_price"><?php
+                        echo Mage::helper('core')->currency($lastmilePriceDpdSaterday, true, false);
+                        ?></span>
+                </div>
+            </div>
+            <?php
+        endforeach;
+    else :
+        ?>
+        Helaas... er kunnen geen data getoond worden.
+        <?php
+    endif
+    ?>
+</div>
 
 
 <input type="hidden" name="lastmile_deliverdate" id="lastmile_deliverdate"/>

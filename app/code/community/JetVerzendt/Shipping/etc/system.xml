@@ -90,8 +90,6 @@
                     <fields>
                         <jetverzendt_track_trace translate="label comment">
                             <label>Automatisch versturen:</label>
-                            <comment>
-                                <![CDATA[Werkt alleen voor DHL. Kies "Ja" als u wilt dat de track & trace mail automatisch verzonden moet worden, bij aanmelden van een zending bij KeenDelivery. Wilt u dat bij DPD track & mails verzonden worden, kies dan bij het versturen van de order voor de optie Predict. ]]></comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>20</sort_order>
@@ -123,6 +121,7 @@
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_enable>
 
+                        <!-- Shipment methods -->
                         <jetverzendt_shipping_methods translate="label">
                             <label>Aan welke verzendmethodes moet KeenDelivery gekoppeld worden?</label>
                             <frontend_type>select</frontend_type>
@@ -134,7 +133,7 @@
                             <can_be_empty>1</can_be_empty>
                         </jetverzendt_shipping_methods>
 
-                        <!-- Last mile -->
+                        <!-- Auto order complete -->
                         <jetverzendt_lastmile_status_complete translate="label comment">
                             <label>Orderstatus na verzending automatisch op complete zetten:</label>
                             <comment>
@@ -170,7 +169,7 @@
                         <jetverzendt_lastmile_price_dhl_evening translate="label comment">
                             <label>Evt. meerprijs DHL avondlevering:</label>
                             <comment>
-                                <![CDATA[Voorbeeld: 1.50<br/><br/><br/><br/>]]></comment>
+                                <![CDATA[Voorbeeld: 1.50]]></comment>
                             <validate>validate-zero-or-greater</validate>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
@@ -178,6 +177,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_price_dhl_evening>
+                        <jetverzendt_lastmile_button_dhl_evening translate="label comment">
+                            <label>Afwijkende knop tekst</label>
+                            <comment>
+                                <![CDATA[Optioneel: wijzig knoptekst "Kies een bezorgmoment"<br/><br/><br/><br/>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>26</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </jetverzendt_lastmile_button_dhl_evening>
 
                         <!-- Saturday delivery DPD -->
                         <jetverzendt_lastmile_saterday_dpd_enable translate="label comment">
@@ -189,7 +198,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_saterday_dpd_enable>
-
                         <jetverzendt_lastmile_saterday_dpd_time translate="label comment">
                             <label>Tijdstip voor DPD zaterdaglevering:</label>
                             <comment>
@@ -200,11 +208,10 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_saterday_dpd_time>
-
                         <jetverzendt_lastmile_saterday_dpd_price translate="label comment">
                             <label>Evt. meerprijs zaterdaglevering DPD:</label>
                             <comment>
-                                <![CDATA[Voorbeeld: 1.50<br/><br/><br/><br/>]]></comment>
+                                <![CDATA[Voorbeeld: 1.50]]></comment>
                             <validate>validate-zero-or-greater</validate>
                             <frontend_type>text</frontend_type>
                             <sort_order>35</sort_order>
@@ -212,6 +219,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_saterday_dpd_price>
+                        <jetverzendt_lastmile_saterday_dpd_button translate="label comment">
+                            <label>Afwijkende knop tekst</label>
+                            <comment>
+                                <![CDATA[Optioneel: wijzig knoptekst "Zaterdaglevering"<br/><br/><br/><br/>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>33</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </jetverzendt_lastmile_saterday_dpd_button>
 
                         <!-- Fadello/Same Day Delivery -->
                         <jetverzendt_lastmile_fadello_enable translate="label comment">
@@ -238,7 +255,7 @@
                         <jetverzendt_lastmile_fadello_price translate="label comment">
                             <label>Evt. meerprijs Same Day Delivery:</label>
                             <comment>
-                                <![CDATA[Voorbeeld: 9.95<br/><br/><br/><br/>]]></comment>
+                                <![CDATA[Voorbeeld: 9.95]]></comment>
                             <validate>validate-zero-or-greater</validate>
                             <frontend_type>text</frontend_type>
                             <sort_order>45</sort_order>
@@ -246,6 +263,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_fadello_price>
+                        <jetverzendt_lastmile_fadello_button translate="label comment">
+                            <label>Afwijkende knop tekst</label>
+                            <comment>
+                                <![CDATA[Optioneel: wijzig knoptekst "Same Day Delivery"<br/><br/><br/><br/>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>45</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </jetverzendt_lastmile_fadello_button>
 
                         <!-- Next Day Premium -->
                         <jetverzendt_lastmile_nextdaypremium_enable translate="label comment">
@@ -261,7 +288,7 @@
                         <jetverzendt_lastmile_nextdaypremium_price translate="label comment">
                             <label>Evt. meerprijs Next Day Premium:</label>
                             <comment>
-                                <![CDATA[Voorbeeld: 9.95<br/><br/><br/><br/>]]></comment>
+                                <![CDATA[Voorbeeld: 9.95]]></comment>
                             <validate>validate-zero-or-greater</validate>
                             <frontend_type>text</frontend_type>
                             <sort_order>47</sort_order>
@@ -269,6 +296,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_nextdaypremium_price>
+                        <jetverzendt_lastmile_nextdaypremium_button translate="label comment">
+                            <label>Afwijkende knop tekst</label>
+                            <comment>
+                                <![CDATA[Optioneel: wijzig knoptekst "Next Day Premium"<br/><br/><br/><br/>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>48</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </jetverzendt_lastmile_nextdaypremium_button>
 
                         <!-- Parcelshop DHL -->
                         <jetverzendt_lastmile_dhl_parcelshop_enable translate="label comment">
@@ -313,6 +350,17 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </jetverzendt_lastmile_dpd_parcelshop_price>
+
+                        <jetverzendt_lastmile_parcelshop_button translate="label comment">
+                            <label>Afwijkende knop tekst Parcelshops</label>
+                            <comment>
+                                <![CDATA[Optioneel: wijzig knoptekst "Kies een Parcelshop uit"]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>67</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </jetverzendt_lastmile_parcelshop_button>
 
                         <!-- Google Maps Key -->
                         <jetverzendt_lastmile_google_maps_key translate="label comment">

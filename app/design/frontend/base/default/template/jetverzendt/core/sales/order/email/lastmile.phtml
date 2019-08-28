@@ -1,0 +1,5 @@
+<?php $_order = $this->getOrder(); ?>
+<?php $_helper = Mage::helper('jetverzendt_shipping'); ?>
+<?php $_deliveryOptions = $_helper->getOrderLastMileDescription($_order); ?>
+<?php echo $_deliveryOptions; ?>
+
