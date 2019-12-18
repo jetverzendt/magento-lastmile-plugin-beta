@@ -122,53 +122,70 @@ class JetVerzendt_Shipping_JetverzendtController extends Mage_Adminhtml_Controll
      * @throws Exception
      */
     public function printlabelsAction()
+
     {
 
         $jetIds = array();
-        $ids = $this->getRequest()->getPost('shipment_ids');
+        $shipmentIds = $this->getRequest()->getPost('shipment_ids');
+        $orderIds = $this->getRequest()->getPost('order_ids');
 
-        if (isset($ids) && is_array($ids)) {
-            try {
+        try {
+            $collection = array();
+
+            if (isset($shipmentIds) && is_array($shipmentIds)) {
 
                 $collection = Mage::getModel('sales/order_shipment')->getCollection();
                 $collection->addAttributeToFilter('j_s.jet_shipment_id', array('notnull' => true));
-                $collection->addAttributeToFilter('entity_id', array('in' => $ids));
-                $collection->getSelect()->join(
+                $collection->addAttributeToFilter('entity_id', array('in' => $shipmentIds));
+                $collection->getSelect()->group('entity_id')->join(
                     array('j_s' => Mage::getSingleton('core/resource')->getTableName('jetverzendt_shipping/shipment')),
                     'main_table.order_id = j_s.mage_order_id', array('j_s.*')
                 );
 
-                foreach ($collection as $order) {
-                    $jetIds[] = $order->getJetShipmentId();
+            } else if (isset($orderIds) && is_array($orderIds)) {
 
-                    $shipment = Mage::getModel('jetverzendt_shipping/shipment')->load($order->getJetShipmentId(), 'jet_shipment_id');
-                    $shipment->setLabelPrinted(1);
-                    $shipment->setJetUpdatedAt(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
-                    $shipment->save();
-                }
-
-                if (!empty($jetIds)) {
-                    Mage::helper('jetverzendt_shipping')->retrieveLabelsFromJetVerzendt($jetIds);
+                $collection = Mage::getModel('sales/order_shipment')->getCollection();
+                $collection->addAttributeToFilter('j_s.jet_shipment_id', array('notnull' => true));
+                $collection->addAttributeToFilter('order_id', array('in' => $orderIds));
+                $collection->getSelect()->group('order_id')->join(
+                    array('j_s' => Mage::getSingleton('core/resource')->getTableName('jetverzendt_shipping/shipment')),
+                    'main_table.order_id = j_s.mage_order_id', array('j_s.*')
+                );
 
 
-                } else {
-                    Mage::getSingleton('core/session')->addError('Helaas... Deze labels kunnen niet worden afgedrukt');
-                    Mage::app()->getResponse()->setRedirect(
-                        Mage::helper('adminhtml')->getUrl(
-                            '*/sales_shipment'
-                        )
-                    )->sendResponse();
-                }
-
-            } catch (Exception $e) {
-                $debugData['http_error'] = array('error' => $e->getMessage(), 'code' => $e->getCode());
-                Mage::log($debugData, null, 'jetverzendt.log');
-                throw $e;
             }
-            return '';
-        }
 
+            foreach ($collection as $order) {
+                $jetIds[] = $order->getJetShipmentId();
+
+                $shipment = Mage::getModel('jetverzendt_shipping/shipment')->load($order->getJetShipmentId(), 'jet_shipment_id');
+                $shipment->setLabelPrinted(1);
+                $shipment->setJetUpdatedAt(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
+                $shipment->save();
+            }
+
+            if (!empty($jetIds)) {
+                Mage::helper('jetverzendt_shipping')->retrieveLabelsFromJetVerzendt($jetIds);
+
+
+            } else {
+                Mage::getSingleton('core/session')->addError('Helaas... Deze labels kunnen niet worden afgedrukt');
+                Mage::app()->getResponse()->setRedirect(
+                    Mage::helper('adminhtml')->getUrl(
+                        '*/sales_shipment'
+                    )
+                )->sendResponse();
+            }
+
+        } catch
+        (Exception $e) {
+            $debugData['http_error'] = array('error' => $e->getMessage(), 'code' => $e->getCode());
+            Mage::log($debugData, null, 'jetverzendt.log');
+            throw $e;
+        }
+        return '';
     }
+
 
     /**
      * Bulk order send to KeenDelivery
@@ -203,7 +220,8 @@ class JetVerzendt_Shipping_JetverzendtController extends Mage_Adminhtml_Controll
     /**
      * Save default order setting
      */
-    public function defaultorderAction()
+    public
+    function defaultorderAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $postData = $this->getRequest()->getPost();
@@ -220,7 +238,8 @@ class JetVerzendt_Shipping_JetverzendtController extends Mage_Adminhtml_Controll
     /**
      * Bulk order send action to KeenDelivery
      */
-    public function sendordersAction()
+    public
+    function sendordersAction()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $postData = $this->getRequest()->getPost();
@@ -233,6 +252,7 @@ class JetVerzendt_Shipping_JetverzendtController extends Mage_Adminhtml_Controll
                 unset($postDataSettings['increment_id']);
                 unset($postDataSettings['default_order']);
                 unset($postDataSettings['form_key']);
+                unset($postDataSettings['reference']);
                 Mage::getModel('core/config')->saveConfig('jetverzendt/default_shipment_form', http_build_query($postDataSettings));
                 Mage::getModel('core/config')->saveConfig('jetverzendt/default_shipment_form_time', time());
                 Mage::app()->getStore()->resetConfig();

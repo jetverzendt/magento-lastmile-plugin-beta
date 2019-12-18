@@ -1,0 +1,13 @@
+{
+  "name": "jetverzendt/magento-plugin-1",
+  "license": "GPL-3.0",
+  "type": "magento-module",
+  "description": "Keen Delivery plugin voor Magento 1. Bevat Last Mile functionaliteit op checkout pagina",
+  "homepage": "https://github.com/hans2103/magento-plugin-1",
+  "authors": [
+    {
+      "name": "JetVerzendt",
+      "email": "info@keendelivery.com"
+    }
+  ]
+}

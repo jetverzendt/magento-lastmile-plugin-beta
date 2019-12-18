@@ -112,7 +112,7 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
     public function addShipmentsDropdownAction($observer)
     {
         $block = $observer->getEvent()->getBlock();
-        if (get_class($block) == 'Mage_Adminhtml_Block_Widget_Grid_Massaction'
+        if ($block instanceof Mage_Adminhtml_Block_Widget_Grid_Massaction
             && $block->getRequest()->getControllerName() == 'sales_shipment'
         ) {
             $block->addItem(
@@ -132,7 +132,7 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
     public function addOrdersDropdownAction($observer)
     {
         $block = $observer->getEvent()->getBlock();
-        if (get_class($block) == 'Mage_Adminhtml_Block_Widget_Grid_Massaction'
+        if ($block instanceof Mage_Adminhtml_Block_Widget_Grid_Massaction
             && $block->getRequest()->getControllerName() == 'sales_order'
         ) {
             $block->addItem(
@@ -144,14 +144,14 @@ class JetVerzendt_Shipping_Model_Adminhtml_Observer
                 )
             );
 
-           /* $block->addItem(
-                'jet_labels', array(
-                    'label' => 'Print KeenDelivery labels',
-                    'url' => Mage::getModel('adminhtml/url')->getUrl(
-                        'adminhtml/jetverzendt/printlabels'
-                    )
-                )
-            );*/
+             $block->addItem(
+                 'jet_labels', array(
+                     'label' => 'Print KeenDelivery labels',
+                     'url' => Mage::getModel('adminhtml/url')->getUrl(
+                         'adminhtml/jetverzendt/printlabels'
+                     )
+                 )
+             );
         }
     }
 

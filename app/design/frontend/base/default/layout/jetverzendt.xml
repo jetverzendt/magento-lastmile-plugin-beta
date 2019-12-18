@@ -74,5 +74,11 @@
         </reference>
     </onestepcheckout_ajax_save_billing>
 
+
+    <!-- Email template -->
+    <jetverzendt_email_order_lastmile>
+        <block type="core/template" template="jetverzendt/core/sales/order/email/lastmile.phtml"/>
+    </jetverzendt_email_order_lastmile>
+
 </layout>
 

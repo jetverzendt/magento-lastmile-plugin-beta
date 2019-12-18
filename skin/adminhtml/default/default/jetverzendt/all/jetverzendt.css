@@ -75,6 +75,11 @@
     color: grey;
 }
 
+
+.keen_alert {
+    height: 150px!important;
+}
+
 .keen_tooltip {
     position: relative;
     display: inline-block;
